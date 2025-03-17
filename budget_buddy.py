@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS user (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     first_name VARCHAR(100) NOT NULL,
+    username VARCHAR(100) UNIQUE,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(100)
 )
@@ -89,9 +90,9 @@ class User():
         self.username = int(input("Enter your username :"))
         self.passw =int(input("Enter your password :"))
         cursor.execute("""
-            INSERT INTO user (name, first_name, email, password)
-            VALUES (%s, %s, %s, %s)
-        """, (self.username, "First Name", "email@example.com", self.passw))
+            INSERT INTO user (name, first_name, username, email, password)
+            VALUES (%s, %s, %s, %s, %s)
+        """, ("Name", "First Name", self.username, "email@example.com", self.passw))
         mydb.commit()
 
     def connect_user(self):
