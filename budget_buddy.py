@@ -10,7 +10,7 @@ mydb = mysql.connector.connect(
     host="localhost",
     user="root",
     password=os.getenv("PASSWORD"),
-    database="bank_account"
+    database="budget_buddy"
 )
 cursor = mydb.cursor()
 
@@ -109,6 +109,3 @@ class User():
         else : 
             print("Wrong password, try again")
 
-
-user = User()
-user.create_account()
