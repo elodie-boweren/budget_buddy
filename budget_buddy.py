@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import pygame
 import sys
+import re
 
 load_dotenv("c:/Users/arnau/Documents/La Plateforme/SQL/.env")
 
@@ -33,7 +34,6 @@ CREATE TABLE IF NOT EXISTS account (
     id INT AUTO_INCREMENT PRIMARY KEY,
     balance INT NOT NULL,
     iban VARCHAR(100) NOT NULL,
-    transaction_id INT NOT NULL,
     user_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id)
 )
@@ -86,14 +86,52 @@ class User():
     def __init__(self, username, passw):
         self.username = username 
         self.passw = passw
+
+    def correct_password(self, password):
+        correct_password = re.compile(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$')
+        if correct_password.match(password):
+            return True
+        return False
+    
+    def enter_password(self):
+        while True:
+            self.passw =int(input("Enter your password :"))
+            if self.correct_password(self.passw):
+                cursor.execute("""
+                    INSERT INTO user (name, first_name, username, email, password)
+                    VALUES (%s, %s, %s, %s, %s)
+                    """, (self.name, self.first_name, self.username, self.email , self.passw))
+                mydb.commit()
+            else :
+                print("Invalide password, please try an other one")
+                self.enter_password()
+
+    def enter_username(self):
+        while True :
+            cursor.execute("SELECT * FROM user WHERE username = %s", (self.username,))
+            if cursor.fetchone():
+                print("This username is already taken, please choose another one.")
+                self.enter_username()
+            else :
+                break
+
     def create_account(self):
+        self.name = int(input("Enter your name :"))
+        self.first_name =int(input("Enter your first name:"))
         self.username = int(input("Enter your username :"))
-        self.passw =int(input("Enter your password :"))
+
+        self.enter_username()
+        
+        self.email = int(input("Enter your email :"))
+
+        self.enter_password()
+
         cursor.execute("""
             INSERT INTO user (name, first_name, username, email, password)
             VALUES (%s, %s, %s, %s, %s)
-        """, ("Name", "First Name", self.username, "email@example.com", self.passw))
+            """, (self.name, self.first_name, self.username, self.email , self.passw))
         mydb.commit()
+            
 
     def connect_user(self):
         cursor.execute("SELECT id, password FROM user WHERE name = %s", (self.username,))
@@ -109,4 +147,5 @@ class User():
                 accounts = cursor.fetchall()
         else : 
             print("Wrong password, try again")
+            self.connect_user()
 
