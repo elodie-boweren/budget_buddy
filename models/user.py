@@ -2,7 +2,7 @@ import mysql.connector
 from dotenv import load_dotenv
 import os
 import re
-from budget_buddy.connection import App
+from connection import App
 
 load_dotenv("./.env")
 
