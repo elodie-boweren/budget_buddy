@@ -101,18 +101,12 @@ class User():
             cursor.execute("SELECT * FROM user WHERE email = %s", (self.email,))
             if cursor.fetchone():
                 print("This email is already taken, please choose another one.")
-                self.info_check()
             else :
                 self.passw =input("Enter your password :")
                 if self.correct_password(self.passw):
-                    cursor.execute("""
-                        INSERT INTO user (name, first_name, email, password)
-                        VALUES (%s, %s, %s, %s)
-                        """, (self.name, self.first_name, self.email , self.passw))
-                    mydb.commit()
+                    break
                 else :
                     print("Invalide password, please try an other one")
-                    self.info_check()
 
 
     def create_account(self):
@@ -136,8 +130,8 @@ class User():
         cursor.execute("SELECT password FROM user WHERE email = %s", (self.enter_email,))
         self.user_password = cursor.fetchone()
         cursor.execute("SELECT email FROM user")
-        self.list_email = [cursor.fetchall]
-        if self.enter_password == self.user_password and self.enter_email in self.list_email:
+        self.list_email = [email[0] for email in cursor.fetchall()]
+        if self.enter_password == self.user_password[0] and self.enter_email in self.list_email:
             if self.email in admin_email :
                 cursor.execute("SELECT * FROM account")
                 cursor.fetchall()
@@ -150,37 +144,46 @@ class User():
             print("Wrong password, try again")
             self.log_in()
 
-
 user = User()
 
 class Transaction():
     def __init__(self):
-        self.user_id = ("SELECT id FROM user WHERE email = %s" (user.email))
-        self.user_balance = ("SELECT balance FROM amount WHERE user_id = %s", (self.user_id) )
-
+        cursor.execute("SELECT id FROM user WHERE email = %s" (user.email))
+        self.user_id = cursor.fetchall()
+        cursor.execute("SELECT balance FROM amount WHERE user_id = %s", (self.user_id) )
+        self.user_balance = cursor.fetchall()
     def deposit(self, amount):
         self.amount = amount
         new_balance = self.user_balance + self.amount
+        cursor.execute("UPDATE accout SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
+        mydb.commit()
+        self.user_balance = new_balance
 
     def withdrawal(self, amount):
         self.amount = amount
         new_balance = self.user_balance - self.amount
+        cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
+        mydb.commit()
+        self.user_balance = new_balance
 
     def outcoming_transfert(self):
-        amount = input ("Insert amount to transfert :")
+        amount = int(input ("Insert amount to transfert :"))
         iban = input ("Enter IBAN : ")
         cursor.execute("SELECT iban from account")
         iban_list = [cursor.fetchall]
         if iban in iban_list :
-            cursor.execute("SELECT id FROM user WHERE iban = %s" (iban))
-            self.outcoming_name = cursor.fetchall()
+            cursor.execute("SELECT id FROM user WHERE iban = %s" (iban,))
+            self.outcoming_name = cursor.fetchone()[0]
             cursor.execute("SELECT balance FROM account WHERE user_id = %s" (self.outcoming_name))
-            self.outcoming_balance = cursor.fetchall()
+            self.outcoming_balance = cursor.fetchone()[0]
             cursor.execute("SELECT balance FROM account WHERE user_id = %s" (self.user_id))
             self.balance = cursor.fetchall()
             if self.balance > amount :
-                self.balance - amount
-                self.outcoming_balance + amount
+                self.balance -= amount
+                self.outcoming_balance += amount
+                cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (self.balance, self.user_id))
+                cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (self.outcoming_balance, self.outcoming_name))
+                mydb.commit()
 
 
         
