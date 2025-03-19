@@ -3,6 +3,7 @@ import mysql.connector
 from dotenv import load_dotenv
 import os
 import re
+import bcrypt
 
 load_dotenv("./.env")
 
@@ -13,71 +14,6 @@ mydb = mysql.connector.connect(
     database="budget_buddy"
 )
 cursor = mydb.cursor()
-
-table_user = """
-CREATE TABLE IF NOT EXISTS user (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    first_name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(100)
-)
-"""
-cursor.execute(table_user)
-mydb.commit()
-
-
-table_account = """
-CREATE TABLE IF NOT EXISTS account (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    balance INT NOT NULL,
-    iban VARCHAR(100) NOT NULL,
-    user_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(id)
-)
-"""
-cursor.execute(table_account)
-mydb.commit()
-
-
-table_type = """
-CREATE TABLE IF NOT EXISTS type (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    deposit INT NOT NULL,
-    withdrawal INT NOT NULL,
-    incoming_transfert INT NOT NULL,
-    outcoming_transfert INT NOT NULL
-)
-"""
-cursor.execute(table_type)
-mydb.commit()
-
-
-table_category = """
-CREATE TABLE IF NOT EXISTS category (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL
-)
-"""
-cursor.execute(table_category)
-mydb.commit()
-
-
-table_transaction = """
-CREATE TABLE IF NOT EXISTS transaction (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    date DATE,
-    description VARCHAR(100) NOT NULL,
-    reference VARCHAR(100) NOT NULL,
-    type_id INT NOT NULL,
-    category_id INT NOT NULL,
-    FOREIGN KEY (type_id) REFERENCES type(id),
-    FOREIGN KEY (category_id) REFERENCES category(id)
-)
-"""
-cursor.execute(table_transaction)
-
-mydb.commit()
 
 admin_email = ["Budgetbuddy1@laplateforme.io","Budgetbuddy2@laplateforme.io","Budgetbuddy3@laplateforme.io","Budgetbuddy4@laplateforme.io","Budgetbuddy5@laplateforme.io"]
 
@@ -169,10 +105,15 @@ class User():
                 error_label.configure(text="Cet email est déjà utilisé.")
                 return
 
+            #protect password:
+            salt = bcrypt.gensalt()
+            bytes = password.encode('utf-8')
+            hash_password = bcrypt.hashpw(bytes, salt)
+            
             cursor.execute("""
                 INSERT INTO user (name, first_name, email, password)
                 VALUES (%s, %s, %s, %s)
-            """, (name, firstname, email, password))
+            """, (name, firstname, email, hash_password))
             mydb.commit()
             error_label.configure(text="Compte créé avec succès !", text_color="green")
             main_menu()
@@ -193,30 +134,32 @@ class User():
         self.enter_email.place(relx=0.5, rely=0.4, anchor="center")
         self.enter_password.place(relx=0.5, rely=0.5, anchor="center")
 
+        error_label = ctk.CTkLabel(root, text="", text_color="red")
+        error_label.place(relx=0.5, rely=0.7, anchor="center")
+
         def validate():
             email = self.enter_email.get()
-            password = self.enter_password.get()
+            entered_password = self.enter_password.get()
 
             cursor.execute("SELECT id, password FROM user WHERE email = %s", (email,))
             result = cursor.fetchone()
-
-            error_label = ctk.CTkLabel(root, text="", text_color="red")
-            error_label.place(relx=0.5, rely=0.7, anchor="center")
-
-            if result:
-                user_id, user_password = result
-                if password == user_password:
-                    error_label.configure(text="Connexion réussie !", text_color="green")
+            
+            if result: 
+                user_id, hash_password = result
+                userBytes = entered_password.encode('utf-8')
+                if bcrypt.checkpw(userBytes, hash_password.encode('utf-8')):
+                    error_label.configure(text="Connected!", text_color="green")
+                    root.update()
                     if email in admin_email:
                         admin_menu()
                     else:
                         user_menu()
                 else:
-                    error_label.configure(text="Mot de passe incorrect.", text_color="red")
+                    error_label.configure(text="Wrong password.", text_color="red")
             else:
-                error_label.configure(text="Email non trouvé.", text_color="red")
+                error_label.configure(text="Email not found.", text_color="red")
 
-        validate_button = ctk.CTkButton(root, text="Validate", command=validate)
+        validate_button = ctk.CTkButton(root, text="Submit", command=validate)
         validate_button.place(relx=0.5, rely=0.6, anchor="center")
 
         back_button = ctk.CTkButton(root, text="Back", command=main_menu)
