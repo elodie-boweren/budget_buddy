@@ -140,11 +140,6 @@ class User():
         back_button = ctk.CTkButton(root, text="Back", command=main_menu)
         back_button.place(relx=0.5, rely=0.65, anchor="center")
             
-    def toggle_password_visibility(self):
-        if self.show_password.get():
-            self.password.configure(show="")
-        else:
-            self.password.configure(show="*")
 
     def log_in(self):
         clear_screen()
@@ -159,7 +154,7 @@ class User():
         error_label.place(relx=0.5, rely=0.7, anchor="center")
 
         self.show_password = ctk.BooleanVar(value=False)
-        self.show_password_checkbox = ctk.CTkCheckBox(root, text="Show", variable=self.show_password, command=self.toggle_password_visibility)
+        self.show_password_checkbox = ctk.CTkCheckBox(root, text="Show", variable=self.show_password, command=self.password_visibility)
         self.show_password_checkbox.place(relx=0.65, rely=0.5, anchor="center")
 
         def validate():
@@ -188,7 +183,19 @@ class User():
         validate_button.place(relx=0.5, rely=0.6, anchor="center")
 
         back_button = ctk.CTkButton(root, text="Back", command=main_menu)
-        back_button.place(relx=0.5, rely=0.7, anchor="center")
+        back_button.place(relx=0.5, rely=0.65, anchor="center")
+
+    def toggle_password_visibility(self):
+        if self.show_password.get():
+            self.passw.configure(show="")
+        else:
+            self.passw.configure(show="*")
+
+    def password_visibility(self):
+        if self.show_password.get():
+            self.enter_password.configure(show="")
+        else:
+            self.enter_password.configure(show="*")
 
 user = User()
 
