@@ -55,7 +55,6 @@ class User():
             return True
         return False
     
-
     def info_check(self):
         self.email = ctk.CTkEntry(root, placeholder_text = "Email")
         self.email.place(relx = 0.5, rely = 0.45, anchor = "center")
@@ -86,7 +85,7 @@ class User():
         self.password.place(relx=0.5, rely=0.5, anchor="center")
 
         self.show_password = ctk.BooleanVar(value=False)
-        self.show_password_checkbox = ctk.CTkCheckBox(root, text="Show", variable=self.show_password, command=self.toggle_password_visibility)
+        self.show_password_checkbox = ctk.CTkCheckBox(root, text="Show", variable=self.show_password, command=self.password_visibility)
         self.show_password_checkbox.place(relx=0.7, rely=0.5, anchor="center")
 
         def submit():
@@ -138,17 +137,16 @@ class User():
         submit_button.place(relx=0.5, rely=0.6, anchor="center")
 
         back_button = ctk.CTkButton(root, text="Back", command=main_menu)
-        back_button.place(relx=0.5, rely=0.65, anchor="center")
-            
+        back_button.place(relx=0.5, rely=0.65, anchor="center")      
 
     def log_in(self):
         clear_screen()
 
-        self.enter_email = ctk.CTkEntry(root, width = 220, placeholder_text="Email")
-        self.enter_password = ctk.CTkEntry(root, width = 220, placeholder_text="Password", show="*")
+        self.email = ctk.CTkEntry(root, width = 220, placeholder_text="Email")
+        self.password = ctk.CTkEntry(root, width = 220, placeholder_text="Password", show="*")
 
-        self.enter_email.place(relx=0.5, rely=0.4, anchor="center")
-        self.enter_password.place(relx=0.5, rely=0.5, anchor="center")
+        self.email.place(relx=0.5, rely=0.4, anchor="center")
+        self.password.place(relx=0.5, rely=0.5, anchor="center")
 
         error_label = ctk.CTkLabel(root, text="", text_color="red")
         error_label.place(relx=0.5, rely=0.7, anchor="center")
@@ -185,17 +183,11 @@ class User():
         back_button = ctk.CTkButton(root, text="Back", command=main_menu)
         back_button.place(relx=0.5, rely=0.65, anchor="center")
 
-    def toggle_password_visibility(self):
-        if self.show_password.get():
-            self.passw.configure(show="")
-        else:
-            self.passw.configure(show="*")
-
     def password_visibility(self):
         if self.show_password.get():
-            self.enter_password.configure(show="")
+            self.password.configure(show="")
         else:
-            self.enter_password.configure(show="*")
+            self.password.configure(show="*")
 
 user = User()
 
@@ -254,4 +246,4 @@ if __name__ == "__main__" :
     root.mainloop()
 
         
-#bcrypt
+
