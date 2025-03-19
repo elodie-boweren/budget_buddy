@@ -1,8 +1,11 @@
 import customtkinter as ctk
 import mysql.connector
 from dotenv import load_dotenv
+import random
+import string
 import os
 import re
+import bcrypt
 
 load_dotenv("./.env")
 
@@ -42,13 +45,13 @@ def main_menu():
     button2.place(relx = 0.5, rely = 0.6, anchor = "center")
 
 class User():
-    def __init__(self, email=None, passw=None):
+    def __init__(self, email=None, password=None):
         self.email = email
-        self.passw = passw
+        self.password = password
 
-    def correct_password(self, passw):
+    def correct_password(self, password):
         correct_password = re.compile(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z\d0-9@$!%*?&]{10,}$')
-        if correct_password.match(passw):
+        if correct_password.match(password):
             return True
         return False
     
@@ -56,56 +59,56 @@ class User():
     def info_check(self):
         self.email = ctk.CTkEntry(root, placeholder_text = "Email")
         self.email.place(relx = 0.5, rely = 0.45, anchor = "center")
-        self.passw = ctk.CTkEntry(root, placeholder_text = "password")
-        self.passw.place(relx = 0.5, rely = 0.5, anchor = "center")
+        self.password = ctk.CTkEntry(root, placeholder_text = "password")
+        self.password.place(relx = 0.5, rely = 0.5, anchor = "center")
 
         def validate():
             email = self.email.get()
-            password = self.passw.get()
+            password = self.password.get()
             cursor.execute("SELECT * FROM user WHERE email = %s", (email,))
             if cursor.fetchone():
                 print("This email is already taken, please choose another one.")
             elif not self.correct_password(password):
                 print("Invalid password, please try another one.")
 
-        validate_button = ctk.CTkButton(root, text="Validate", command=validate)
+        validate_button = ctk.CTkButton(root, text="Submit", command=validate)
         validate_button.place(relx=0.5, rely=0.55, anchor="center")
 
     def create_account(self):
-        self.name = ctk.CTkEntry(root, placeholder_text="Surname")
-        self.firstname = ctk.CTkEntry(root, placeholder_text="Firstname")
-        self.email = ctk.CTkEntry(root, placeholder_text="Email")
-        self.passw = ctk.CTkEntry(root, placeholder_text="Password", show="*")
+        self.name = ctk.CTkEntry(root, width = 220, placeholder_text="Surname")
+        self.firstname = ctk.CTkEntry(root, width = 220, placeholder_text="Firstname")
+        self.email = ctk.CTkEntry(root, width = 220, placeholder_text="Email")
+        self.password = ctk.CTkEntry(root, width = 220, placeholder_text="Password", show="*")
 
         self.name.place(relx=0.5, rely=0.35, anchor="center")
         self.firstname.place(relx=0.5, rely=0.4, anchor="center")
         self.email.place(relx=0.5, rely=0.45, anchor="center")
-        self.passw.place(relx=0.5, rely=0.5, anchor="center")
+        self.password.place(relx=0.5, rely=0.5, anchor="center")
 
         self.show_password = ctk.BooleanVar(value=False)
         self.show_password_checkbox = ctk.CTkCheckBox(root, text="Show", variable=self.show_password, command=self.toggle_password_visibility)
-        self.show_password_checkbox.place(relx=0.65, rely=0.5, anchor="center")
+        self.show_password_checkbox.place(relx=0.7, rely=0.5, anchor="center")
 
         def submit():
             name = self.name.get()
             firstname = self.firstname.get()
             email = self.email.get()
-            password = self.passw.get()
+            password = self.password.get()
     
             error_label = ctk.CTkLabel(root, text="", text_color="red")
             error_label.place(relx=0.5, rely=0.7, anchor="center")
 
             if not name or not firstname or not email or not password:
-                error_label.configure(text="Tous les champs doivent être remplis.")
+                error_label.configure(text="All fields must be complete.")
                 return
 
             if not self.correct_password(password):
-                error_label.configure(text="Mot de passe invalide.")
+                error_label.configure(text="Invalid password.")
                 return
 
             cursor.execute("SELECT * FROM user WHERE email = %s", (email,))
             if cursor.fetchone():
-                error_label.configure(text="Cet email est déjà utilisé.")
+                error_label.configure(text="This email is already in use.")
                 return
 
             #protect password:
@@ -128,7 +131,7 @@ class User():
             """, (0, iban, id_user_create[0]))
             mydb.commit()
 
-            error_label.configure(text="Compte créé avec succès !", text_color="green")
+            error_label.configure(text="Your account was created successfully", text_color="green")
             main_menu()
 
         submit_button = ctk.CTkButton(root, text="Submit", command=submit)
@@ -139,9 +142,9 @@ class User():
             
     def toggle_password_visibility(self):
         if self.show_password.get():
-            self.passw.configure(show="")
+            self.password.configure(show="")
         else:
-            self.passw.configure(show="*")
+            self.password.configure(show="*")
 
     def log_in(self):
         clear_screen()
