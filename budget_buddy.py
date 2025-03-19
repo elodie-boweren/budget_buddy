@@ -1,8 +1,6 @@
 import mysql.connector
 from dotenv import load_dotenv
 import os
-import pygame
-import sys
 
 load_dotenv("c:/Users/arnau/Documents/La Plateforme/SQL/.env")
 

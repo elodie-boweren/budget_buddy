@@ -1,5 +1,15 @@
 import customtkinter as ctk
 from customtkinter import *
+import mysql.connector
+
+mydb = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="Laura21!",
+    database="BudgetBuddy"
+)
+
+cursor = mydb.cursor()
 
 ctk.set_default_color_theme("green")
 ctk.set_appearance_mode("dark")
