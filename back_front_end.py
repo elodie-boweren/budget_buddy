@@ -3,7 +3,6 @@ import mysql.connector
 from dotenv import load_dotenv
 import os
 import re
-import bcrypt
 
 load_dotenv("./.env")
 
@@ -24,6 +23,7 @@ root = ctk.CTk()
 root.geometry("800x600")
 
 
+iban = "FR" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
 
 def clear_screen():
     for widget in root.winfo_children():
@@ -71,7 +71,6 @@ class User():
         validate_button = ctk.CTkButton(root, text="Validate", command=validate)
         validate_button.place(relx=0.5, rely=0.55, anchor="center")
 
-
     def create_account(self):
         self.name = ctk.CTkEntry(root, placeholder_text="Surname")
         self.firstname = ctk.CTkEntry(root, placeholder_text="Firstname")
@@ -82,6 +81,10 @@ class User():
         self.firstname.place(relx=0.5, rely=0.4, anchor="center")
         self.email.place(relx=0.5, rely=0.45, anchor="center")
         self.passw.place(relx=0.5, rely=0.5, anchor="center")
+
+        self.show_password = ctk.BooleanVar(value=False)
+        self.show_password_checkbox = ctk.CTkCheckBox(root, text="Show", variable=self.show_password, command=self.toggle_password_visibility)
+        self.show_password_checkbox.place(relx=0.65, rely=0.5, anchor="center")
 
         def submit():
             name = self.name.get()
@@ -115,6 +118,16 @@ class User():
                 VALUES (%s, %s, %s, %s)
             """, (name, firstname, email, hash_password))
             mydb.commit()
+
+            cursor.execute("SELECT id FROM user WHERE email = %s",(email,))
+            id_user_create = cursor.fetchone()
+
+            cursor.execute("""
+            INSERT INTO account (balance, iban, user_id)
+            VALUES (%s, %s, %s)
+            """, (0, iban, id_user_create[0]))
+            mydb.commit()
+
             error_label.configure(text="Compte créé avec succès !", text_color="green")
             main_menu()
 
@@ -124,6 +137,11 @@ class User():
         back_button = ctk.CTkButton(root, text="Back", command=main_menu)
         back_button.place(relx=0.5, rely=0.65, anchor="center")
             
+    def toggle_password_visibility(self):
+        if self.show_password.get():
+            self.passw.configure(show="")
+        else:
+            self.passw.configure(show="*")
 
     def log_in(self):
         clear_screen()
@@ -136,6 +154,10 @@ class User():
 
         error_label = ctk.CTkLabel(root, text="", text_color="red")
         error_label.place(relx=0.5, rely=0.7, anchor="center")
+
+        self.show_password = ctk.BooleanVar(value=False)
+        self.show_password_checkbox = ctk.CTkCheckBox(root, text="Show", variable=self.show_password, command=self.toggle_password_visibility)
+        self.show_password_checkbox.place(relx=0.65, rely=0.5, anchor="center")
 
         def validate():
             email = self.enter_email.get()
