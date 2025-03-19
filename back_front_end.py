@@ -144,8 +144,8 @@ class User():
     def log_in(self):
         clear_screen()
 
-        self.enter_email = ctk.CTkEntry(root, placeholder_text="Email")
-        self.enter_password = ctk.CTkEntry(root, placeholder_text="Password", show="*")
+        self.enter_email = ctk.CTkEntry(root, width = 220, placeholder_text="Email")
+        self.enter_password = ctk.CTkEntry(root, width = 220, placeholder_text="Password", show="*")
 
         self.enter_email.place(relx=0.5, rely=0.4, anchor="center")
         self.enter_password.place(relx=0.5, rely=0.5, anchor="center")
@@ -155,7 +155,7 @@ class User():
 
         self.show_password = ctk.BooleanVar(value=False)
         self.show_password_checkbox = ctk.CTkCheckBox(root, text="Show", variable=self.show_password, command=self.password_visibility)
-        self.show_password_checkbox.place(relx=0.65, rely=0.5, anchor="center")
+        self.show_password_checkbox.place(relx=0.7, rely=0.5, anchor="center")
 
         def validate():
             email = self.enter_email.get()
