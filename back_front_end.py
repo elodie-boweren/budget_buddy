@@ -2,10 +2,9 @@ import customtkinter as ctk
 import mysql.connector
 from dotenv import load_dotenv
 import os
-import sys
 import re
 
-load_dotenv("c:/Users/arnau/Documents/La Plateforme/SQL/.env")
+load_dotenv("./.env")
 
 mydb = mysql.connector.connect(
     host="localhost",
