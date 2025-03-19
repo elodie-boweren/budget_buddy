@@ -2,13 +2,13 @@ import mysql.connector
 from dotenv import load_dotenv
 import os
 
-load_dotenv("c:/Users/arnau/Documents/La Plateforme/SQL/.env")
+# load_dotenv("c:/Users/arnau/Documents/La Plateforme/SQL/.env")
 
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    password=os.getenv("PASSWORD"),
-    database="budget_buddy"
+    password="Laura21!",
+    database="BudgetBuddy"
 )
 cursor = mydb.cursor()
 
