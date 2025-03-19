@@ -106,6 +106,128 @@ def main_menu():
     button1.place(relx = 0.5, rely = 0.4, anchor = "center")
     button2.place(relx = 0.5, rely = 0.6, anchor = "center")
 
+def user_menu():
+    clear_screen()
+    label = ctk.CTkLabel(root, text="Menu Utilisateur")
+    label.pack(pady=10)
+
+def admin_menu():
+    clear_screen()
+    label = ctk.CTkLabel(root, text="Menu Administrateur")
+    label.pack(pady=10)
+
+# class Transaction():
+#     def __init__(self):
+#         cursor.execute("SELECT id FROM user WHERE email = %s", (user.email))
+#         self.user_id = cursor.fetchall()
+#         cursor.execute("SELECT balance FROM amount WHERE user_id = %s", (self.user_id) )
+#         self.user_balance = cursor.fetchall()
+#     def deposit(self, amount):
+#         self.amount = amount
+#         new_balance = self.user_balance + self.amount
+#         cursor.execute("UPDATE accout SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
+#         mydb.commit()
+#         self.user_balance = new_balance
+
+#     def withdrawal(self, amount):
+#         self.amount = amount
+#         new_balance = self.user_balance - self.amount
+#         cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
+#         mydb.commit()
+#         self.user_balance = new_balance
+
+    #def outcoming_transfert(self):
+        #amount = int(input ("Insert amount to transfert :"))
+        #iban = input ("Enter IBAN : ")
+        #cursor.execute("SELECT iban from account")
+        #iban_list = [cursor.fetchall]
+        #if iban in iban_list :
+            #cursor.execute("SELECT id FROM user WHERE iban = %s", (iban,))
+            #self.outcoming_name = cursor.fetchone()[0]
+            #cursor.execute("SELECT balance FROM account WHERE user_id = %s", (self.outcoming_name))
+            #self.outcoming_balance = cursor.fetchone()[0]
+            #cursor.execute("SELECT balance FROM account WHERE user_id = %s", (self.user_id))
+            #self.balance = cursor.fetchall()
+            #if self.balance > amount :
+                #self.balance -= amount
+                #self.outcoming_balance += amount
+                #cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (self.balance, self.user_id))
+                #cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (self.outcoming_balance, self.outcoming_name))
+                #mydb.commit()
+
+class Dashboard:
+    def __init__(self, user_email):
+        self.user_email = user_email
+        self.user_id = None
+        self.balance = 0
+
+    def get_user_info(self):
+        """Récupère l'ID et le solde de l'utilisateur"""
+        cursor.execute("""
+            SELECT user.id, user.first_name, user.name, account.balance 
+            FROM user
+            JOIN account ON user.id = account.user_id
+            WHERE user.email = %s
+        """, (self.user_email,))
+        user_info = cursor.fetchone()
+
+        if user_info:
+            self.user_id, self.first_name, self.name, self.balance = user_info
+        else:
+            self.user_id, self.first_name, self.name, self.balance = None, None, None, 0
+
+    def get_transactions(self):
+        """Récupère la liste des transactions de l'utilisateur"""
+        cursor.execute("""
+            SELECT transaction.date, transaction.description, transaction.reference, category.name 
+            FROM transaction
+            JOIN category ON transaction.category_id = category.id
+            JOIN account ON account.id = transaction.type_id
+            WHERE account.user_id = %s
+            ORDER BY transaction.date DESC
+        """, (self.user_id,))
+        return cursor.fetchall()
+
+    def display_dashboard(self):
+        """Affiche les informations utilisateur et les transactions"""
+        self.get_user_info()
+        
+        clear_screen()
+
+        if self.user_id:
+            # Affichage du nom et du solde
+            welcome_label = ctk.CTkLabel(root, text=f"Bienvenue {self.first_name} {self.name}", font=("Arial", 18))
+            welcome_label.pack(pady=10)
+            
+            balance_label = ctk.CTkLabel(root, text=f"Votre solde actuel : {self.balance}€", font=("Arial", 16))
+            balance_label.pack(pady=10)
+
+            # Affichage des transactions
+            transactions = self.get_transactions()
+            if transactions:
+                transaction_label = ctk.CTkLabel(root, text="Historique des transactions :", font=("Arial", 14))
+                transaction_label.pack(pady=5)
+
+                for transaction in transactions:
+                    date, description, reference, category_name = transaction
+                    transaction_text = f"{date} - {description} ({category_name}) - Réf: {reference}"
+                    trans_label = ctk.CTkLabel(root, text=transaction_text, font=("Arial", 12))
+                    trans_label.pack()
+
+            else:
+                no_transaction_label = ctk.CTkLabel(root, text="Aucune transaction trouvée.", font=("Arial", 12))
+                no_transaction_label.pack()
+        
+        else:
+            error_label = ctk.CTkLabel(root, text="Utilisateur introuvable.", text_color="red", font=("Arial", 16))
+            error_label.pack(pady=10)
+        
+        back_button = ctk.CTkButton(root, text="Retour", command=user_menu)
+        back_button.pack(pady=20)
+
+
+dashboard = Dashboard("%s")
+
 class User():
     def __init__(self, email=None, passw=None):
         self.email = email
@@ -194,86 +316,36 @@ class User():
         self.enter_email.place(relx=0.5, rely=0.4, anchor="center")
         self.enter_password.place(relx=0.5, rely=0.5, anchor="center")
 
-        def validate():
-            email = self.enter_email.get()
-            password = self.enter_password.get()
+        # def validate():
+        #     email = self.enter_email.get()
+        #     password = self.enter_password.get()
 
-            cursor.execute("SELECT id, password FROM user WHERE email = %s", (email,))
-            result = cursor.fetchone()
+        #     cursor.execute("SELECT id, password FROM user WHERE email = %s", (email,))
+        #     result = cursor.fetchone()
 
-            error_label = ctk.CTkLabel(root, text="", text_color="red")
-            error_label.place(relx=0.5, rely=0.7, anchor="center")
+        #     error_label = ctk.CTkLabel(root, text="", text_color="red")
+        #     error_label.place(relx=0.5, rely=0.7, anchor="center")
 
-            if result:
-                user_id, user_password = result
-                if password == user_password:
-                    error_label.configure(text="Connexion réussie !", text_color="green")
-                    if email in admin_email:
-                        admin_menu()
-                    else:
-                        user_menu()
-                else:
-                    error_label.configure(text="Mot de passe incorrect.", text_color="red")
-            else:
-                error_label.configure(text="Email non trouvé.", text_color="red")
+        #     if result:
+        #         user_id, user_password = result
+        #         if password == user_password:
+        #             error_label.configure(text="Connexion réussie !", text_color="green")
+        #             if email in admin_email:
+        #                 admin_menu()
+        #             else:
+        #                 user_menu()
+        #         else:
+        #             error_label.configure(text="Mot de passe incorrect.", text_color="red")
+        #     else:
+        #         error_label.configure(text="Email non trouvé.", text_color="red")
 
-        validate_button = ctk.CTkButton(root, text="Validate", command=validate)
+        validate_button = ctk.CTkButton(root, text="Confirm", command=dashboard.display_dashboard)
         validate_button.place(relx=0.5, rely=0.6, anchor="center")
 
         back_button = ctk.CTkButton(root, text="Back", command=main_menu)
         back_button.place(relx=0.5, rely=0.7, anchor="center")
 
 user = User()
-
-def user_menu():
-    clear_screen()
-    label = ctk.CTkLabel(root, text="Menu Utilisateur")
-    label.pack(pady=10)
-
-def admin_menu():
-    clear_screen()
-    label = ctk.CTkLabel(root, text="Menu Administrateur")
-    label.pack(pady=10)
-
-class Transaction():
-    def __init__(self):
-        cursor.execute("SELECT id FROM user WHERE email = %s", (user.email))
-        self.user_id = cursor.fetchall()
-        cursor.execute("SELECT balance FROM amount WHERE user_id = %s", (self.user_id) )
-        self.user_balance = cursor.fetchall()
-    def deposit(self, amount):
-        self.amount = amount
-        new_balance = self.user_balance + self.amount
-        cursor.execute("UPDATE accout SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
-        mydb.commit()
-        self.user_balance = new_balance
-
-    def withdrawal(self, amount):
-        self.amount = amount
-        new_balance = self.user_balance - self.amount
-        cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
-        mydb.commit()
-        self.user_balance = new_balance
-
-    #def outcoming_transfert(self):
-        #amount = int(input ("Insert amount to transfert :"))
-        #iban = input ("Enter IBAN : ")
-        #cursor.execute("SELECT iban from account")
-        #iban_list = [cursor.fetchall]
-        #if iban in iban_list :
-            #cursor.execute("SELECT id FROM user WHERE iban = %s", (iban,))
-            #self.outcoming_name = cursor.fetchone()[0]
-            #cursor.execute("SELECT balance FROM account WHERE user_id = %s", (self.outcoming_name))
-            #self.outcoming_balance = cursor.fetchone()[0]
-            #cursor.execute("SELECT balance FROM account WHERE user_id = %s", (self.user_id))
-            #self.balance = cursor.fetchall()
-            #if self.balance > amount :
-                #self.balance -= amount
-                #self.outcoming_balance += amount
-                #cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (self.balance, self.user_id))
-                #cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (self.outcoming_balance, self.outcoming_name))
-                #mydb.commit()
-
 
 if __name__ == "__main__" :
     main_menu()
