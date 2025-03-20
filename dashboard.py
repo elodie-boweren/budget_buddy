@@ -1,12 +1,13 @@
 import customtkinter as ctk
 from dotenv import load_dotenv
 import mysql.connector
-import random
-import string
+# import random
+# import string
 import os
-import re
-import bcrypt
+# import re
+# import bcrypt
 # from back_front_end import *
+from database import *
 
 
 load_dotenv("./.env")
@@ -19,8 +20,7 @@ mydb = mysql.connector.connect(
 )
 cursor = mydb.cursor()
 
-root = ctk.CTk()
-root.geometry("800x600")
+
 
 def clear_screen():
     for widget in root.winfo_children():

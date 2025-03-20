@@ -1,6 +1,10 @@
 import mysql.connector
 from dotenv import load_dotenv
 import os
+import customtkinter as ctk
+
+root = ctk.CTk()
+root.geometry("800x600")
 
 load_dotenv("./.env")
 
@@ -106,4 +110,4 @@ INSERT IGNORE INTO account(iban)
 accounts = """
 INSERT IGNORE INTO transaction(date, description,reference)
     VALUES("19/03/2025",),
-   """
+"""

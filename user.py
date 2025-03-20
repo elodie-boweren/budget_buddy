@@ -1,51 +1,13 @@
 import customtkinter as ctk
-import mysql.connector
+# import mysql.connector
 from dotenv import load_dotenv
-import random
-import string
-import os
+# import random
+# import string
+# import os
 import re
 import bcrypt
 from dashboard import Dashboard
-
-load_dotenv("./.env")
-
-mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password=os.getenv("PASSWORD"),
-    database="budget_buddy"
-)
-cursor = mydb.cursor()
-
-admin_email = ["Budgetbuddy1@laplateforme.io","Budgetbuddy2@laplateforme.io","Budgetbuddy3@laplateforme.io","Budgetbuddy4@laplateforme.io","Budgetbuddy5@laplateforme.io"]
-
-ctk.set_default_color_theme("green")
-ctk.set_appearance_mode("dark")
-
-root = ctk.CTk()
-root.geometry("800x600")
-
-dashboard = Dashboard()
-
-
-iban = "FR" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
-
-def clear_screen():
-    for widget in root.winfo_children():
-        widget.destroy()
-
-def main_menu():
-    clear_screen()
-
-    label = ctk.CTkLabel(root, text = "Budget Buddy")
-    label.pack(pady=10)
-
-    button1 = ctk.CTkButton(root, text="Sign in", command = user.log_in)
-    button2 = ctk.CTkButton(root, text = "Sign up", command = user.create_account)
-
-    button1.place(relx = 0.5, rely = 0.4, anchor = "center")
-    button2.place(relx = 0.5, rely = 0.6, anchor = "center")
+from database import *
 
 class User():
     def __init__(self, email=None, password=None):
@@ -199,63 +161,3 @@ class User():
             self.enter_password.configure(show="")
         else:
             self.enter_password.configure(show="*")
-
-user = User()
-
-
-def user_menu():
-    clear_screen()
-    label = ctk.CTkLabel(root, text="Menu Utilisateur")
-    label.pack(pady=10)
-
-def admin_menu():
-    clear_screen()
-    label = ctk.CTkLabel(root, text="Menu Administrateur")
-    label.pack(pady=10)
-
-class Transaction():
-    def __init__(self):
-        cursor.execute("SELECT id FROM user WHERE email = %s", (user.email))
-        self.user_id = cursor.fetchall()
-        cursor.execute("SELECT balance FROM amount WHERE user_id = %s", (self.user_id) )
-        self.user_balance = cursor.fetchall()
-    def deposit(self, amount):
-        self.amount = amount
-        new_balance = self.user_balance + self.amount
-        cursor.execute("UPDATE accout SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
-        mydb.commit()
-        self.user_balance = new_balance
-
-    def withdrawal(self, amount):
-        self.amount = amount
-        new_balance = self.user_balance - self.amount
-        cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
-        mydb.commit()
-        self.user_balance = new_balance
-
-    #def outcoming_transfert(self):
-        #amount = int(input ("Insert amount to transfert :"))
-        #iban = input ("Enter IBAN : ")
-        #cursor.execute("SELECT iban from account")
-        #iban_list = [cursor.fetchall]
-        #if iban in iban_list :
-            #cursor.execute("SELECT id FROM user WHERE iban = %s", (iban,))
-            #self.outcoming_name = cursor.fetchone()[0]
-            #cursor.execute("SELECT balance FROM account WHERE user_id = %s", (self.outcoming_name))
-            #self.outcoming_balance = cursor.fetchone()[0]
-            #cursor.execute("SELECT balance FROM account WHERE user_id = %s", (self.user_id))
-            #self.balance = cursor.fetchall()
-            #if self.balance > amount :
-                #self.balance -= amount
-                #self.outcoming_balance += amount
-                #cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (self.balance, self.user_id))
-                #cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (self.outcoming_balance, self.outcoming_name))
-                #mydb.commit()
-
-
-if __name__ == "__main__" :
-    main_menu()
-    root.mainloop()
-
-        
-#bcrypt
