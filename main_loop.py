@@ -29,9 +29,9 @@ ctk.set_appearance_mode("dark")
 
 dashboard = Dashboard()
 
-def main_menu():
-    user.log_in()
+# def log_menu():
+#     user.log_in()
 
 if __name__ == "__main__" :
-    main_menu()
+    user.log_menu()
     root.mainloop()        

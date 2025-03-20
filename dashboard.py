@@ -20,7 +20,7 @@ class Dashboard:
         self.balance = 0
 
     def get_user_info(self):
-        """Récupère l'ID et le solde de l'utilisateur"""
+        """gets id and user balance"""
         cursor.execute("""
             SELECT user.id, user.first_name, user.name, account.balance 
             FROM user
@@ -35,7 +35,7 @@ class Dashboard:
             self.user_id, self.first_name, self.name, self.balance = None, None, None, 0
 
     def get_transactions(self):
-        """Récupère la liste des transactions de l'utilisateur"""
+        """gets the user's list of transactionsr"""
         cursor.execute("""
             SELECT transaction.date, transaction.description, transaction.reference, category.name 
             FROM transaction
@@ -47,23 +47,23 @@ class Dashboard:
         return cursor.fetchall()
 
     def display_dashboard(self):
-        """Affiche les informations utilisateur et les transactions"""
+        """Displays user's balance and information"""
         self.get_user_info()
         
         clear_screen()
 
         if self.user_id:
             # Affichage du nom et du solde
-            welcome_label = ctk.CTkLabel(root, text=f"Bienvenue {self.first_name} {self.name}", font=("Arial", 18))
+            welcome_label = ctk.CTkLabel(root, text=f"Welcome {self.first_name} {self.name}", font=("Arial", 18))
             welcome_label.pack(pady=10)
             
-            balance_label = ctk.CTkLabel(root, text=f"Votre solde actuel : {self.balance}€", font=("Arial", 16))
+            balance_label = ctk.CTkLabel(root, text=f"Your current balance : {self.balance}€", font=("Arial", 16))
             balance_label.pack(pady=10)
 
             # Affichage des transactions
             transactions = self.get_transactions()
             if transactions:
-                transaction_label = ctk.CTkLabel(root, text="Historique des transactions :", font=("Arial", 14))
+                transaction_label = ctk.CTkLabel(root, text="Past transactions :", font=("Arial", 14))
                 transaction_label.pack(pady=5)
 
                 for transaction in transactions:
@@ -73,13 +73,13 @@ class Dashboard:
                     trans_label.pack()
 
             else:
-                no_transaction_label = ctk.CTkLabel(root, text="Aucune transaction trouvée.", font=("Arial", 12))
+                no_transaction_label = ctk.CTkLabel(root, text="No transaction.", font=("Arial", 12))
                 no_transaction_label.pack()
         
         else:
-            error_label = ctk.CTkLabel(root, text="Utilisateur introuvable.", text_color="red", font=("Arial", 16))
+            error_label = ctk.CTkLabel(root, text="Customer not found.", text_color="red", font=("Arial", 16))
             error_label.pack(pady=10)
         
-        back_button = ctk.CTkButton(root, text="Retour")
+        back_button = ctk.CTkButton(root, text="Back")
         back_button.pack(pady=20)
 

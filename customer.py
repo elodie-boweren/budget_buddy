@@ -114,11 +114,11 @@ class Customer():
     def log_in(self):
         clear_screen()
 
-        self.enter_email = ctk.CTkEntry(root, width=220, placeholder_text="Email")
-        self.enter_password = ctk.CTkEntry(root, width=220, placeholder_text="Password", show="*")
+        self.email = ctk.CTkEntry(root, width=220, placeholder_text="Email")
+        self.password = ctk.CTkEntry(root, width=220, placeholder_text="Password", show="*")
 
-        self.enter_email.place(relx=0.5, rely=0.4, anchor="center")
-        self.enter_password.place(relx=0.5, rely=0.5, anchor="center")
+        self.email.place(relx=0.5, rely=0.4, anchor="center")
+        self.password.place(relx=0.5, rely=0.5, anchor="center")
 
         error_label = ctk.CTkLabel(root, text="", text_color="red")
         error_label.place(relx=0.5, rely=0.7, anchor="center")
@@ -128,8 +128,8 @@ class Customer():
         self.show_password_checkbox.place(relx=0.7, rely=0.5, anchor="center")
 
         def validate():
-            email = self.enter_email.get()
-            entered_password = self.enter_password.get()
+            email = self.email.get()
+            entered_password = self.password.get()
 
             cursor.execute("SELECT id, password FROM user WHERE email = %s", (email,))
             result = cursor.fetchone()
@@ -162,13 +162,6 @@ class Customer():
 
         back_button = ctk.CTkButton(root, text="Back", command=self.log_menu)
         back_button.place(relx=0.5, rely=0.65, anchor="center")
-
-
-    def toggle_password_visibility(self):
-        if self.show_password.get():
-            self.password.configure(show="")
-        else:
-            self.password.configure(show="*")
 
     def password_visibility(self):
         if self.show_password.get():
