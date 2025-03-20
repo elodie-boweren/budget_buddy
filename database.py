@@ -47,7 +47,7 @@ table_transaction = """
 CREATE TABLE IF NOT EXISTS transaction (
     id INT AUTO_INCREMENT PRIMARY KEY,
     date DATE NOT NULL,
-    type ENUM("deposit", "withdrawal", "transfer")
+    type ENUM("deposit", "withdrawal", "transfer"),
     description VARCHAR(100) NOT NULL,
     category ENUM("food", "house", "transport", "leasure", "health", "education")
 )
