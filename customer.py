@@ -1,15 +1,21 @@
 import customtkinter as ctk
-# import mysql.connector
+import mysql.connector
 from dotenv import load_dotenv
-# import random
-# import string
-# import os
+import random
+import string
+import os
 import re
 import bcrypt
 from dashboard import Dashboard
 from database import *
+from common import *
 
-class User():
+
+iban = "FR" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
+admin_email = ["Budgetbuddy1@laplateforme.io","Budgetbuddy2@laplateforme.io","Budgetbuddy3@laplateforme.io","Budgetbuddy4@laplateforme.io","Budgetbuddy5@laplateforme.io"]
+
+
+class Customer():
     def __init__(self, email=None, password=None):
         self.email = email
         self.password = password
@@ -97,12 +103,12 @@ class User():
             mydb.commit()
 
             error_label.configure(text="Your account was created successfully", text_color="green")
-            main_menu()
+            self.log_menu()
 
         submit_button = ctk.CTkButton(root, text="Submit", command=submit)
         submit_button.place(relx=0.5, rely=0.6, anchor="center")
 
-        back_button = ctk.CTkButton(root, text="Back", command=main_menu)
+        back_button = ctk.CTkButton(root, text="Back", command=self.log_menu)
         back_button.place(relx=0.5, rely=0.65, anchor="center")
             
 
@@ -138,7 +144,7 @@ class User():
                     if email in admin_email:
                         admin_menu()
                     else:
-                        user_menu()
+                        dashboard.display_dashboard()
                 else:
                     error_label.configure(text="Wrong password.", text_color="red")
             else:
@@ -147,7 +153,7 @@ class User():
         validate_button = ctk.CTkButton(root, text="Submit", command=dashboard.display_dashboard)
         validate_button.place(relx=0.5, rely=0.6, anchor="center")
 
-        back_button = ctk.CTkButton(root, text="Back", command=main_menu)
+        back_button = ctk.CTkButton(root, text="Back", command=self.log_menu)
         back_button.place(relx=0.5, rely=0.65, anchor="center")
 
     def toggle_password_visibility(self):
@@ -161,3 +167,19 @@ class User():
             self.enter_password.configure(show="")
         else:
             self.enter_password.configure(show="*")
+
+    def log_menu(self):
+        clear_screen()
+
+        label = ctk.CTkLabel(root, text = "Budget Buddy")
+        label.pack(pady=10)
+
+        button1 = ctk.CTkButton(root, text="Sign in", command = self.log_in)
+        button2 = ctk.CTkButton(root, text = "Sign up", command = self.create_account)
+
+        button1.place(relx = 0.5, rely = 0.4, anchor = "center")
+        button2.place(relx = 0.5, rely = 0.6, anchor = "center")
+
+
+user = Customer()
+dashboard=Dashboard()

@@ -1,12 +1,13 @@
-# import customtkinter as ctk
-# import mysql.connector
+import customtkinter as ctk
+import mysql.connector
 from dotenv import load_dotenv
 # import random
 # import string
 # import os
 # import re
-# import bcrypt
+import bcrypt
 from database import *
+from common import *
 
 
 class Transaction():

@@ -6,20 +6,8 @@ import mysql.connector
 import os
 # import re
 # import bcrypt
-# from back_front_end import *
 from database import *
-
-
-load_dotenv("./.env")
-
-mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password=os.getenv("PASSWORD"),
-    database="budget_buddy"
-)
-cursor = mydb.cursor()
-
+from common import *
 
 
 def clear_screen():
@@ -94,3 +82,4 @@ class Dashboard:
         
         back_button = ctk.CTkButton(root, text="Retour")
         back_button.pack(pady=20)
+
