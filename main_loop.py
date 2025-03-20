@@ -14,7 +14,7 @@ from common import *
 
 user=Customer()
 
-load_dotenv("c:/Users/arnau/Documents/La Plateforme/SQL/.env")
+load_dotenv("../.env")
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -24,21 +24,14 @@ mydb = mysql.connector.connect(
 )
 cursor = mydb.cursor()
 
-
-
 ctk.set_default_color_theme("green")
 ctk.set_appearance_mode("dark")
 
 dashboard = Dashboard()
 
-
 def main_menu():
-
-    user.log_menu()
-
+    user.log_in()
 
 if __name__ == "__main__" :
     main_menu()
-    root.mainloop()
-
-        
+    root.mainloop()        

@@ -6,7 +6,7 @@ import customtkinter as ctk
 root = ctk.CTk()
 root.geometry("800x600")
 
-load_dotenv("c:/Users/arnau/Documents/La Plateforme/SQL/.env")
+load_dotenv("../.env")
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS user (
     name VARCHAR(100) NOT NULL,
     first_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(150)
+    password VARCHAR(255)
 )
 """
 cursor.execute(table_user)

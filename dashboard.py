@@ -1,9 +1,9 @@
 import customtkinter as ctk
 from dotenv import load_dotenv
-import mysql.connector
+# import mysql.connector
 # import random
 # import string
-import os
+# import os
 # import re
 # import bcrypt
 from database import *
@@ -25,7 +25,7 @@ class Dashboard:
             SELECT user.id, user.first_name, user.name, account.balance 
             FROM user
             JOIN account ON user.id = account.user_id
-            WHERE user.email = %s
+            WHERE user.id = %s
         """, (self.user_id,))
         user_info = cursor.fetchone()
 
