@@ -1,8 +1,12 @@
 import mysql.connector
 from dotenv import load_dotenv
 import os
+import customtkinter as ctk
 
-load_dotenv("./.env")
+root = ctk.CTk()
+root.geometry("800x600")
+
+load_dotenv("c:/Users/arnau/Documents/La Plateforme/SQL/.env")
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -77,33 +81,3 @@ CREATE TABLE IF NOT EXISTS transaction (
 cursor.execute(table_transaction)
 mydb.commit()
 
-#create content to table
-customers = """
-INSERT IGNORE INTO user (name, first_name, email, password)
-    VALUES("Dupont", "Pierre", "pierre.dupont@email.com", "p@ssw0rd123"),
-    ("Martin", "Sophie", "sophie.martin@email.com", "S0ph!eM2025"),
-    ("Durand", "Julien", "julien.durand@email.com", "Jule$$1234"),
-    ("Lefevre", "Emma", "emma.lefevre@email.com", "Emm@2025!"),
-    ("Moreau", "Lucas", "lucas.moreau@email.com", "Luc@z456"),
-    ("Rousseau", "Clara", "clara.rousseau@email.com", "C1araR0ck$")
-"""
-# cursor.execute(customers)
-# mydb.commit()
-
-accounts = """
-INSERT IGNORE INTO account(iban)
-    VALUES("FR76 3000 6000 0112 3456 7890 189"),
-    ("FR18 2004 1000 0501 2345 6789 013"),
-    ("FR92 1010 7000 0123 4567 8910 567"),
-    ("FR41 3078 8000 0400 1234 5678 901"),
-    ("FR62 3007 6070 0112 3456 7890 234"),
-    ("FR83 2004 1010 0520 4567 8910 678")"""
-
-# cursor.execute(accounts)
-# mydb.commit()
-
-#create transactions
-accounts = """
-INSERT IGNORE INTO transaction(date, description,reference)
-    VALUES("19/03/2025",),
-   """

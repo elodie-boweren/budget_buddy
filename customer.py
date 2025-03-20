@@ -6,45 +6,16 @@ import string
 import os
 import re
 import bcrypt
-
-load_dotenv("./.env")
-
-mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password=os.getenv("PASSWORD"),
-    database="budget_buddy"
-)
-cursor = mydb.cursor()
-
-admin_email = ["Budgetbuddy1@laplateforme.io","Budgetbuddy2@laplateforme.io","Budgetbuddy3@laplateforme.io","Budgetbuddy4@laplateforme.io","Budgetbuddy5@laplateforme.io"]
-
-ctk.set_default_color_theme("green")
-ctk.set_appearance_mode("dark")
-
-root = ctk.CTk()
-root.geometry("800x600")
+from dashboard import Dashboard
+from database import *
+from common import *
 
 
 iban = "FR" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
+admin_email = ["Budgetbuddy1@laplateforme.io","Budgetbuddy2@laplateforme.io","Budgetbuddy3@laplateforme.io","Budgetbuddy4@laplateforme.io","Budgetbuddy5@laplateforme.io"]
 
-def clear_screen():
-    for widget in root.winfo_children():
-        widget.destroy()
 
-def main_menu():
-    clear_screen()
-
-    label = ctk.CTkLabel(root, text = "Budget Buddy")
-    label.pack(pady=10)
-
-    button1 = ctk.CTkButton(root, text="Sign in", command = user.log_in)
-    button2 = ctk.CTkButton(root, text = "Sign up", command = user.create_account)
-
-    button1.place(relx = 0.5, rely = 0.4, anchor = "center")
-    button2.place(relx = 0.5, rely = 0.6, anchor = "center")
-
-class User():
+class Customer():
     def __init__(self, email=None, password=None):
         self.email = email
         self.password = password
@@ -131,13 +102,19 @@ class User():
             mydb.commit()
 
             error_label.configure(text="Your account was created successfully", text_color="green")
-            main_menu()
+            self.log_menu()
 
         submit_button = ctk.CTkButton(root, text="Submit", command=submit)
         submit_button.place(relx=0.5, rely=0.6, anchor="center")
 
+<<<<<<< HEAD:back_front_end.py
         back_button = ctk.CTkButton(root, text="Back", command=main_menu)
         back_button.place(relx=0.5, rely=0.65, anchor="center")      
+=======
+        back_button = ctk.CTkButton(root, text="Back", command=self.log_menu)
+        back_button.place(relx=0.5, rely=0.65, anchor="center")
+            
+>>>>>>> 6608a785699df72385ca84c8e23a4481593d9116:customer.py
 
     def log_in(self):
         clear_screen()
@@ -171,79 +148,54 @@ class User():
                     if email in admin_email:
                         admin_menu()
                     else:
-                        user_menu()
+                        dashboard.display_dashboard()
                 else:
                     error_label.configure(text="Wrong password.", text_color="red")
             else:
                 error_label.configure(text="Email not found.", text_color="red")
 
-        validate_button = ctk.CTkButton(root, text="Submit", command=validate)
+        validate_button = ctk.CTkButton(root, text="Submit", command=dashboard.display_dashboard)
         validate_button.place(relx=0.5, rely=0.6, anchor="center")
 
-        back_button = ctk.CTkButton(root, text="Back", command=main_menu)
+        back_button = ctk.CTkButton(root, text="Back", command=self.log_menu)
         back_button.place(relx=0.5, rely=0.65, anchor="center")
 
+<<<<<<< HEAD:back_front_end.py
+=======
+    def toggle_password_visibility(self):
+        if self.show_password.get():
+            self.password.configure(show="")
+        else:
+            self.password.configure(show="*")
+
+>>>>>>> 6608a785699df72385ca84c8e23a4481593d9116:customer.py
     def password_visibility(self):
         if self.show_password.get():
             self.password.configure(show="")
         else:
             self.password.configure(show="*")
 
-user = User()
+    def log_menu(self):
+        clear_screen()
 
-def user_menu():
-    clear_screen()
-    label = ctk.CTkLabel(root, text="Menu Utilisateur")
-    label.pack(pady=10)
+        label = ctk.CTkLabel(root, text = "Budget Buddy")
+        label.pack(pady=10)
 
-def admin_menu():
-    clear_screen()
-    label = ctk.CTkLabel(root, text="Menu Administrateur")
-    label.pack(pady=10)
+        button1 = ctk.CTkButton(root, text="Sign in", command = self.log_in)
+        button2 = ctk.CTkButton(root, text = "Sign up", command = self.create_account)
 
-class Transaction():
-    def __init__(self):
-        cursor.execute("SELECT id FROM user WHERE email = %s", (user.email))
-        self.user_id = cursor.fetchall()
-        cursor.execute("SELECT balance FROM amount WHERE user_id = %s", (self.user_id) )
-        self.user_balance = cursor.fetchall()
-    def deposit(self, amount):
-        self.amount = amount
-        new_balance = self.user_balance + self.amount
-        cursor.execute("UPDATE accout SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
-        mydb.commit()
-        self.user_balance = new_balance
-
-    def withdrawal(self, amount):
-        self.amount = amount
-        new_balance = self.user_balance - self.amount
-        cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
-        mydb.commit()
-        self.user_balance = new_balance
-
-    #def outcoming_transfert(self):
-        #amount = int(input ("Insert amount to transfert :"))
-        #iban = input ("Enter IBAN : ")
-        #cursor.execute("SELECT iban from account")
-        #iban_list = [cursor.fetchall]
-        #if iban in iban_list :
-            #cursor.execute("SELECT id FROM user WHERE iban = %s", (iban,))
-            #self.outcoming_name = cursor.fetchone()[0]
-            #cursor.execute("SELECT balance FROM account WHERE user_id = %s", (self.outcoming_name))
-            #self.outcoming_balance = cursor.fetchone()[0]
-            #cursor.execute("SELECT balance FROM account WHERE user_id = %s", (self.user_id))
-            #self.balance = cursor.fetchall()
-            #if self.balance > amount :
-                #self.balance -= amount
-                #self.outcoming_balance += amount
-                #cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (self.balance, self.user_id))
-                #cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (self.outcoming_balance, self.outcoming_name))
-                #mydb.commit()
+        button1.place(relx = 0.5, rely = 0.4, anchor = "center")
+        button2.place(relx = 0.5, rely = 0.6, anchor = "center")
 
 
+<<<<<<< HEAD:back_front_end.py
 if __name__ == "__main__" :
     main_menu()
     root.mainloop()
 
         
 
+=======
+user = Customer()
+dashboard=Dashboard()
+>>>>>>> 6608a785699df72385ca84c8e23a4481593d9116:customer.py
