@@ -1,8 +1,8 @@
 import customtkinter as ctk
 from dotenv import load_dotenv
 # import mysql.connector
-# import random
-# import string
+import random
+import string
 # import os
 # import re
 # import bcrypt
@@ -20,22 +20,28 @@ class Dashboard:
         self.balance = 0
 
     def get_user_info(self):
-        """Récupère l'ID et le solde de l'utilisateur"""
+        """Gets customer's accounts"""
         cursor.execute("""
-            SELECT user.id, user.first_name, user.name, account.balance 
+            SELECT user.id, user.first_name, user.name 
             FROM user
-            JOIN account ON user.id = account.user_id
             WHERE user.id = %s
         """, (self.user_id,))
         user_info = cursor.fetchone()
 
         if user_info:
-            self.user_id, self.first_name, self.name, self.balance = user_info
+            self.user_id, self.first_name, self.name = user_info
+
+            # gets every accounts
+            cursor.execute("""
+                SELECT id, type, balance, iban FROM account WHERE user_id = %s
+            """, (self.user_id,))
+            self.accounts = cursor.fetchall()
         else:
-            self.user_id, self.first_name, self.name, self.balance = None, None, None, 0
+            self.user_id, self.first_name, self.name, self.accounts = None, None, None, []
+
 
     def get_transactions(self):
-        """Récupère la liste des transactions de l'utilisateur"""
+        """Gets transaction list"""
         cursor.execute("""
             SELECT transaction.date, transaction.description, transaction.reference, category.name 
             FROM transaction
@@ -45,22 +51,51 @@ class Dashboard:
             ORDER BY transaction.date DESC
         """, (self.user_id,))
         return cursor.fetchall()
+    
+    def add_savings_account(self):
+        """add a savings account to customer"""
+        iban = "FR" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
+
+        cursor.execute("""
+            INSERT INTO account (balance, iban, user_id, type)
+            VALUES (%s, %s, %s, %s)
+        """, (0, iban, self.user_id, "epargne"))
+        
+        mydb.commit()
+
+        self.get_user_info()
+
+        success_label = ctk.CTkLabel(root, text="Compte épargne ajouté avec succès !", text_color="green", font=("Arial", 14))
+        success_label.pack(pady=10)
+
+        # Refresh dashboard
+        self.display_dashboard()
+
+    
 
     def display_dashboard(self):
-        """Affiche les informations utilisateur et les transactions"""
+        """Show customers infos"""
         self.get_user_info()
         
         clear_screen()
 
+        for acc_id, acc_type, balance, iban in self.accounts:
+            acc_label = ctk.CTkLabel(root, text=f"Compte {acc_type.capitalize()} ({iban}) : {balance}€", font=("Arial", 14))
+            acc_label.pack(pady=5)
+
         if self.user_id:
-            # Affichage du nom et du solde
+            # Print name and balance
             welcome_label = ctk.CTkLabel(root, text=f"Bienvenue {self.first_name} {self.name}", font=("Arial", 18))
-            welcome_label.pack(pady=10)
+            welcome_label.pack(pady=5)
             
             balance_label = ctk.CTkLabel(root, text=f"Votre solde actuel : {self.balance}€", font=("Arial", 16))
-            balance_label.pack(pady=10)
+            balance_label.pack(pady=5)
 
-            # Affichage des transactions
+            add_savings_button = ctk.CTkButton(root, text="Ajouter un compte épargne", command=self.add_savings_account)
+            add_savings_button.pack(pady=5)
+
+
+            # print transactions
             transactions = self.get_transactions()
             if transactions:
                 transaction_label = ctk.CTkLabel(root, text="Historique des transactions :", font=("Arial", 14))
