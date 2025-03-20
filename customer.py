@@ -107,23 +107,18 @@ class Customer():
         submit_button = ctk.CTkButton(root, text="Submit", command=submit)
         submit_button.place(relx=0.5, rely=0.6, anchor="center")
 
-<<<<<<< HEAD:back_front_end.py
-        back_button = ctk.CTkButton(root, text="Back", command=main_menu)
-        back_button.place(relx=0.5, rely=0.65, anchor="center")      
-=======
         back_button = ctk.CTkButton(root, text="Back", command=self.log_menu)
         back_button.place(relx=0.5, rely=0.65, anchor="center")
             
->>>>>>> 6608a785699df72385ca84c8e23a4481593d9116:customer.py
 
     def log_in(self):
         clear_screen()
 
-        self.email = ctk.CTkEntry(root, width = 220, placeholder_text="Email")
-        self.password = ctk.CTkEntry(root, width = 220, placeholder_text="Password", show="*")
+        self.enter_email = ctk.CTkEntry(root, width=220, placeholder_text="Email")
+        self.enter_password = ctk.CTkEntry(root, width=220, placeholder_text="Password", show="*")
 
-        self.email.place(relx=0.5, rely=0.4, anchor="center")
-        self.password.place(relx=0.5, rely=0.5, anchor="center")
+        self.enter_email.place(relx=0.5, rely=0.4, anchor="center")
+        self.enter_password.place(relx=0.5, rely=0.5, anchor="center")
 
         error_label = ctk.CTkLabel(root, text="", text_color="red")
         error_label.place(relx=0.5, rely=0.7, anchor="center")
@@ -139,36 +134,42 @@ class Customer():
             cursor.execute("SELECT id, password FROM user WHERE email = %s", (email,))
             result = cursor.fetchone()
             
-            if result: 
+            if result:
                 user_id, hash_password = result
                 userBytes = entered_password.encode('utf-8')
+
                 if bcrypt.checkpw(userBytes, hash_password.encode('utf-8')):
                     error_label.configure(text="Connected!", text_color="green")
                     root.update()
+
+                    # Mettre à jour l'ID utilisateur dans le dashboard
+                    dashboard.user_id = user_id
+
+                    # Afficher le bon menu en fonction du type d'utilisateur
                     if email in admin_email:
                         admin_menu()
                     else:
-                        dashboard.display_dashboard()
+                        dashboard.display_dashboard()  # Afficher le dashboard de l'utilisateur
+                    
                 else:
                     error_label.configure(text="Wrong password.", text_color="red")
             else:
                 error_label.configure(text="Email not found.", text_color="red")
 
-        validate_button = ctk.CTkButton(root, text="Submit", command=dashboard.display_dashboard)
+        # Ajouter le bouton Submit pour valider l'identification
+        validate_button = ctk.CTkButton(root, text="Submit", command=validate)
         validate_button.place(relx=0.5, rely=0.6, anchor="center")
 
         back_button = ctk.CTkButton(root, text="Back", command=self.log_menu)
         back_button.place(relx=0.5, rely=0.65, anchor="center")
 
-<<<<<<< HEAD:back_front_end.py
-=======
+
     def toggle_password_visibility(self):
         if self.show_password.get():
             self.password.configure(show="")
         else:
             self.password.configure(show="*")
 
->>>>>>> 6608a785699df72385ca84c8e23a4481593d9116:customer.py
     def password_visibility(self):
         if self.show_password.get():
             self.password.configure(show="")
@@ -188,14 +189,5 @@ class Customer():
         button2.place(relx = 0.5, rely = 0.6, anchor = "center")
 
 
-<<<<<<< HEAD:back_front_end.py
-if __name__ == "__main__" :
-    main_menu()
-    root.mainloop()
-
-        
-
-=======
 user = Customer()
 dashboard=Dashboard()
->>>>>>> 6608a785699df72385ca84c8e23a4481593d9116:customer.py
