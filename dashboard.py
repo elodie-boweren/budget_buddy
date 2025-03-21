@@ -5,11 +5,7 @@ import string
 from database import *
 from common import *
 from CTkMessagebox import CTkMessagebox
-
-
-def clear_screen():
-    for widget in root.winfo_children():
-        widget.destroy()
+from transaction import Transaction
 
 class Dashboard:
     def __init__(self):
@@ -17,6 +13,7 @@ class Dashboard:
         self.balance = 0
         self.accounts = []
         self.selected_account_id = None
+        self.transaction = None
 
     def get_user_info(self):
         """Récupère les comptes de l'utilisateur"""
@@ -32,6 +29,8 @@ class Dashboard:
 
         if user_info:
             self.user_id, self.first_name, self.name = user_info
+
+            self.transaction = Transaction(self.user_id)
 
             # Récupère tous les comptes avec ID et type
             cursor.execute("""
@@ -83,13 +82,12 @@ class Dashboard:
         if self.accounts:
             # Créer le menu déroulant avec les types de compte
             self.account_options = ctk.CTkComboBox(root, 
-                                                   values=[acc_type.capitalize() for _, acc_type, _ in self.accounts],
-                                                   command=self.update_account_info)
+                                                    values=[acc_type.capitalize() for _, acc_type, _ in self.accounts],
+                                                    command=self.update_account_info)
             self.account_options.place(relx=0.5, rely=0.2, anchor="center")
             self.account_options.set(self.accounts[0][1].capitalize())  # Sélection par défaut
 
-            self.welcome = ctk.CTkLabel(root, text=f"Welcome {self.first_name} {self.name}", font=("Arial", 18))
-            self.welcome.place(relx=0.5, rely=0.1, anchor="center")
+            
             # Affichage du solde du compte sélectionné
             acc_id, acc_type, balance = self.accounts[0]
             self.balance_label = ctk.CTkLabel(root, text=f"Solde : {balance}€", font=("Arial", 16))
@@ -98,14 +96,21 @@ class Dashboard:
             # Afficher les transactions
             self.display_transactions()
 
+            self.welcome = ctk.CTkLabel(root, text=f"Welcome {self.first_name} {self.name}", font=("Arial", 18))
+            self.welcome.place(relx=0.5, rely=0.1, anchor="center")
+            
+
             # Bouton pour ajouter un compte épargne
             add_savings_button = ctk.CTkButton(root, text="Ajouter un compte épargne", command=self.confirm_action)
             add_savings_button.place(relx=0.5, rely=0.5, anchor="center")
+
+            self.transaction_button = ctk.CTkButton(root, text="Make a transaction", command = self.transaction.display_transaction)
+            self.transaction_button.place(relx=0.5, rely=0.6, anchor="center")
         else:
             error_label = ctk.CTkLabel(root, text="Aucun compte trouvé.", text_color="red", font=("Arial", 16))
             error_label.place(relx=0.5, rely=0.4, anchor="center")
 
-        back_button = ctk.CTkButton(root, text="Retour")
+        back_button = ctk.CTkButton(root, text="Retour", )
         back_button.place(relx=0.5, rely=0.7, anchor="center")
 
     def display_transactions(self):
