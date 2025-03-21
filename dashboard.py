@@ -8,9 +8,7 @@ from dotenv import load_dotenv
 # import bcrypt
 from database import *
 from common import *
-from transaction import *
 
-transaction = Transaction()
 
 def clear_screen():
     for widget in root.winfo_children():
@@ -22,9 +20,8 @@ class Dashboard:
         self.balance = 0
 
     def get_user_info(self):
-        """Récupère l'ID et le solde de l'utilisateur"""
         cursor.execute("""
-            SELECT user.id, user.first_name, user.name, account.balance 
+            SELECT user.id, user.first_name, user.name, user.email, account.balance 
             FROM user
             JOIN account ON user.id = account.user_id
             WHERE user.id = %s
@@ -37,11 +34,9 @@ class Dashboard:
             self.user_id, self.first_name, self.name, self.balance = None, None, None, 0
 
     def get_transactions(self):
-        """Récupère la liste des transactions de l'utilisateur"""
         cursor.execute("""
-            SELECT transaction.date, transaction.description, transaction.reference, category.name 
+            SELECT date, description, reference, type, category
             FROM transaction
-            JOIN category ON transaction.category_id = category.id
             JOIN account ON account.id = transaction.type_id
             WHERE account.user_id = %s
             ORDER BY transaction.date DESC
@@ -50,7 +45,7 @@ class Dashboard:
     
     def make_transaction(self):
         clear_screen()
-
+        transaction.user_id = dashboard.user_id
         self.enter_date = ctk.CTkEntry(root, width=220, placeholder_text="Date")
         self.enter_description = ctk.CTkEntry(root, width=220, placeholder_text="Description")
         self.enter_reference = ctk.CTkEntry(root, width=220, placeholder_text="Reference")
@@ -141,3 +136,99 @@ class Dashboard:
         back_button = ctk.CTkButton(root, text="Disconnect")
         back_button.place(relx=0.5, rely=0.9, anchor="center")
 
+
+
+class Transaction():
+    def __init__(self, user_id = None):
+        self.user_id = user_id
+        #cursor.execute("SELECT id FROM user WHERE email = %s", (self.user_id))
+        #self.user_id = cursor.fetchone()[0]
+        cursor.execute("SELECT balance FROM amount WHERE user_id = %s", (self.user_id) )
+        self.user_balance = cursor.fetchone()[0]
+
+    def deposit(self):
+        amount_entry = ctk.CTkEntry(root, placeholder_text="Amount")
+        amount_entry.place(relx=0.5, rely=0.45, anchor="center")
+        
+        def validate_deposit():
+            try:
+                amount = float(amount_entry.get())  
+                if amount <= 0:
+                    raise ValueError("Amount must be positive.")
+                new_balance = self.user_balance + amount
+                cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
+                mydb.commit()
+                self.user_balance = new_balance
+            except ValueError as e:
+                error_label = ctk.CTkLabel(root, text=str(e), text_color="red")
+                error_label.place(relx=0.5, rely=0.5, anchor="center")
+
+        validate_button = ctk.CTkButton(root, text="Validate", command=validate_deposit)
+        validate_button.place(relx=0.5, rely=0.55, anchor="center")
+
+    def withdrawal(self):
+        amount_entry = ctk.CTkEntry(root, placeholder_text="Amount")
+        amount_entry.place(relx=0.5, rely=0.45, anchor="center")
+        
+        def validate_withdrawal():
+            try:
+                amount = float(amount_entry.get())  
+                if amount <= 0:
+                    raise ValueError("Amount must be positive.")
+                if amount > self.user_balance:
+                    raise ValueError("Insufficient balance.")
+                new_balance = self.user_balance - amount
+                cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
+                mydb.commit()
+                self.user_balance = new_balance
+            except ValueError as e:
+                error_label = ctk.CTkLabel(root, text=str(e), text_color="red")
+                error_label.place(relx=0.5, rely=0.5, anchor="center")
+
+        validate_button = ctk.CTkButton(root, text="Validate", command=validate_withdrawal)
+        validate_button.place(relx=0.5, rely=0.55, anchor="center")
+
+    def transfer(self):
+        amount_entry = ctk.CTkEntry(root, placeholder_text="Amount")
+        amount_entry.place(relx=0.5, rely=0.5, anchor="center")
+
+        iban_entry = ctk.CTkEntry(root, placeholder_text="IBAN")
+        iban_entry.place(relx=0.5, rely=0.6, anchor="center")
+
+        def validate_transfer():
+            try:
+                amount = float(amount_entry.get())
+                iban = iban_entry.get()
+
+                if amount <= 0:
+                    raise ValueError("Amount must be positive.")
+
+                cursor.execute("SELECT id, balance FROM account WHERE iban = %s", (iban,))
+                recipient_info = cursor.fetchone()
+
+                if not recipient_info:
+                    raise ValueError("IBAN not found.")
+
+                recipient_id, recipient_balance = recipient_info
+
+                if amount > self.user_balance:
+                    raise ValueError("Insufficient balance.")
+
+                new_balance_sender = self.user_balance - amount
+                cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (new_balance_sender, self.user_id))
+
+                new_balance_recipient = recipient_balance + amount
+                cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (new_balance_recipient, recipient_id))
+
+                mydb.commit()
+                self.user_balance = new_balance_sender
+
+            except ValueError as e:
+                error_label = ctk.CTkLabel(root, text=str(e), text_color="red")
+                error_label.place(relx=0.5, rely=0.7, anchor="center")
+
+        validate_button = ctk.CTkButton(root, text="Validate", command=validate_transfer)
+        validate_button.place(relx=0.5, rely=0.8, anchor="center")
+
+dashboard = Dashboard()
+transaction = Transaction()
