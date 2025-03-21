@@ -67,7 +67,7 @@ class Dashboard:
 
         self.get_user_info()  # Rafraîchir les comptes
 
-        success_label = ctk.CTkLabel(root, text="Compte épargne ajouté avec succès !", text_color="green", font=("Arial", 14))
+        success_label = ctk.CTkLabel(root, text="Savings account added successfully !", text_color="green", font=("Arial", 14))
         success_label.pack(pady=10)
 
         self.display_dashboard()  # Rafraîchir l'affichage
@@ -87,17 +87,17 @@ class Dashboard:
 
             # Affichage du solde du compte sélectionné
             acc_id, acc_type, balance = self.accounts[0]
-            self.balance_label = ctk.CTkLabel(root, text=f"Solde : {balance}€", font=("Arial", 16))
+            self.balance_label = ctk.CTkLabel(root, text=f"Balance : {balance}€", font=("Arial", 16))
             self.balance_label.place(relx=0.5, rely=0.3, anchor="center")
 
             # Afficher les transactions
             self.display_transactions()
 
             # Bouton pour ajouter un compte épargne
-            add_savings_button = ctk.CTkButton(root, text="Ajouter un compte épargne", command=self.confirm_action)
+            add_savings_button = ctk.CTkButton(root, text="Create a savings account", command=self.confirm_action)
             add_savings_button.place(relx=0.5, rely=0.5, anchor="center")
         else:
-            error_label = ctk.CTkLabel(root, text="Aucun compte trouvé.", text_color="red", font=("Arial", 16))
+            error_label = ctk.CTkLabel(root, text="No account found.", text_color="red", font=("Arial", 16))
             error_label.place(relx=0.5, rely=0.4, anchor="center")
 
         back_button = ctk.CTkButton(root, text="Retour")
@@ -131,12 +131,13 @@ class Dashboard:
                 trans_label.place(relx=0.5, rely=y_pos, anchor="center")
                 y_pos += 0.05
         else:
-            no_transaction_label = ctk.CTkLabel(root, text="Aucune transaction trouvée.", font=("Arial", 12))
+            no_transaction_label = ctk.CTkLabel(root, text="No transactions found", font=("Arial", 12))
             no_transaction_label.place(relx=0.5, rely=0.4, anchor="center")
 
     def confirm_action(self):
         msg = CTkMessagebox(title="Confirm", message="Do you really want to create a new account ?", icon="question", option_1="Yes", option_2="No")
         if msg.get() == "Yes":
             self.add_savings_account()
+            CTkMessagebox(title="Done", message="New savings account created")
         else:
             CTkMessagebox(title="Canceled", message="Action canceled")
