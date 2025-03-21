@@ -8,6 +8,7 @@ import string
 # import bcrypt
 from database import *
 from common import *
+from CTkMessagebox import CTkMessagebox
 
 
 def clear_screen():
@@ -71,8 +72,6 @@ class Dashboard:
         # Refresh dashboard
         self.display_dashboard()
 
-    
-
     def display_dashboard(self):
         """Show customers infos"""
         self.get_user_info()
@@ -91,7 +90,7 @@ class Dashboard:
             balance_label = ctk.CTkLabel(root, text=f"Votre solde actuel : {self.balance}€", font=("Arial", 16))
             balance_label.pack(pady=5)
 
-            add_savings_button = ctk.CTkButton(root, text="Ajouter un compte épargne", command=self.add_savings_account)
+            add_savings_button = ctk.CTkButton(root, text="Ajouter un compte épargne", command=self.confirm_action)
             add_savings_button.pack(pady=5)
 
 
@@ -117,4 +116,11 @@ class Dashboard:
         
         back_button = ctk.CTkButton(root, text="Retour")
         back_button.pack(pady=20)
+    
+    def confirm_action(self):
+        msg = CTkMessagebox(title="Confirm", message="Do you really want to create a new account ?", icon="question", option_1="Yes", option_2="No")
+        if msg.get() == "Yes":
+            self.add_savings_account()
+        else :
+            CTkMessagebox(title="canceled", message="Action canceled")
 
