@@ -27,6 +27,9 @@ class Dashboard:
         """, (self.user_id,))
         user_info = cursor.fetchone()
 
+        #test connexion id
+        print(f"User ID: {self.user_id}")
+
         if user_info:
             self.user_id, self.first_name, self.name = user_info
 
@@ -85,6 +88,8 @@ class Dashboard:
             self.account_options.place(relx=0.5, rely=0.2, anchor="center")
             self.account_options.set(self.accounts[0][1].capitalize())  # Sélection par défaut
 
+            self.welcome = ctk.CTkLabel(root, text=f"Welcome {self.first_name} {self.name}", font=("Arial", 18))
+            self.welcome.place(relx=0.5, rely=0.1, anchor="center")
             # Affichage du solde du compte sélectionné
             acc_id, acc_type, balance = self.accounts[0]
             self.balance_label = ctk.CTkLabel(root, text=f"Solde : {balance}€", font=("Arial", 16))

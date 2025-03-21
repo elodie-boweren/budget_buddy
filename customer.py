@@ -16,9 +16,11 @@ admin_email = ["Budgetbuddy1@laplateforme.io","Budgetbuddy2@laplateforme.io","Bu
 
 
 class Customer():
-    def __init__(self, email=None, password=None):
+    def __init__(self, email=None, password=None, firstname=None, name=None):
         self.email = email
         self.password = password
+        self.firstname = firstname
+        self.name = name
 
     def correct_password(self, password):
         correct_password = re.compile(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z\d0-9@$!%*?&]{10,}$')
