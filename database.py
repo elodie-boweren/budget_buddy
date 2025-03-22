@@ -33,7 +33,8 @@ mydb.commit()
 table_account = """
 CREATE TABLE IF NOT EXISTS account (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    balance INT NOT NULL,
+    type ENUM("current", "savings")
+    balance INT,
     iban VARCHAR(34) NOT NULL,
     user_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id)
