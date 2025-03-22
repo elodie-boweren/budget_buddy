@@ -39,7 +39,7 @@ class Customer():
             if cursor.fetchone():
                 print("This email is already taken, please choose another one.")
             elif not self.correct_password(password):
-                print("Invalid password, please try another one.")
+                print("Invalid password.")
 
         validate_button = ctk.CTkButton(root, text="Submit", command=validate)
         validate_button.place(relx=0.5, rely=0.55, anchor="center")
@@ -65,15 +65,19 @@ class Customer():
             email = self.email.get()
             password = self.password.get()
     
-            error_label = ctk.CTkLabel(root, text="", text_color="red")
-            error_label.place(relx=0.5, rely=0.7, anchor="center")
+            error_label = ctk.CTkLabel(root, text="", text_color="white")
+            error_label.place(relx=0.5, rely=0.8, anchor="center")
 
             if not name or not firstname or not email or not password:
                 error_label.configure(text="All fields must be complete.")
                 return
 
             if not self.correct_password(password):
-                error_label.configure(text="Invalid password.")
+                error_label.configure(text="Invalid password. Your password must have at least 10 characters including:\n"
+                "one upper case\n"
+                "one lower case\n"
+                "one number\n"
+                "one special character\n")
                 return
 
             cursor.execute("SELECT * FROM user WHERE email = %s", (email,))
