@@ -1,13 +1,9 @@
 import customtkinter as ctk
-from dotenv import load_dotenv
-# import mysql.connector
-# import random
-# import string
-# import os
-# import re
-# import bcrypt
 from database import *
 from common import *
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 def clear_screen():
@@ -37,10 +33,9 @@ class Dashboard:
     def get_transactions(self):
         """gets the user's list of transactionsr"""
         cursor.execute("""
-            SELECT transaction.date, transaction.description, transaction.reference, category.name 
+            SELECT date, amount, type, description, transaction_ref, category 
             FROM transaction
-            JOIN category ON transaction.category_id = category.id
-            JOIN account ON account.id = transaction.type_id
+            JOIN account ON account_id = transaction.iban
             WHERE account.user_id = %s
             ORDER BY transaction.date DESC
         """, (self.user_id,))
@@ -58,16 +53,40 @@ class Dashboard:
             welcome_label.pack(pady=10)
             
             balance_label = ctk.CTkLabel(root, text=f"Your current balance : {self.balance}€", font=("Arial", 16))
-            balance_label.pack(pady=10)
+            balance_label.place(relx = 0, rely = 0.1, anchor = "w")
+            
+            #frame for the pie chart of income and expenditure
+            trans_frame = ctk.CTkFrame(master = root,
+                                       width = 350,
+                                       height = 300,
+                                       corner_radius = 10)
+            trans_frame.place(relx=0.95, y=50, anchor="ne")
 
-            # Affichage des transactions
+            #pie chart of income and expenditure
+            total_income = 6500  
+            total_exp = 3000   
+            labels = ["Income", "Expenditure"]
+            sizes = [total_income, total_exp]
+            colors = ["#8A2BE2", "#5F9EA0"]  
+
+            #pie chart
+            fig, ax = plt.subplots(figsize=(4, 4), dpi=100)
+            ax.pie(sizes, labels=labels, colors=colors, autopct="%1.1f%%", startangle=90)
+            ax.set_title("Income and expenditure")
+
+            # placing chart in frame
+            canvas = FigureCanvasTkAgg(fig, master=trans_frame)
+            canvas.draw()
+            canvas.get_tk_widget().pack(fill="both", expand=True)
+
+            # Display transactions
             transactions = self.get_transactions()
             if transactions:
                 transaction_label = ctk.CTkLabel(root, text="Past transactions :", font=("Arial", 14))
                 transaction_label.pack(pady=5)
 
                 for transaction in transactions:
-                    date, description, reference, category_name = transaction
+                    date, amount, description, reference, category_name = transaction
                     transaction_text = f"{date} - {description} ({category_name}) - Réf: {reference}"
                     trans_label = ctk.CTkLabel(root, text=transaction_text, font=("Arial", 12))
                     trans_label.pack()

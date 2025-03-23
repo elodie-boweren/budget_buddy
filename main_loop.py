@@ -1,11 +1,7 @@
 import customtkinter as ctk
 import mysql.connector
 from dotenv import load_dotenv
-import random
-import string
 import os
-# import re
-# import bcrypt
 from dashboard import Dashboard
 from customer import Customer
 from database import *

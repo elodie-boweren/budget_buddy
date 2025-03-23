@@ -9,6 +9,7 @@ import bcrypt
 from dashboard import Dashboard
 from database import *
 from common import *
+from PIL import Image
 
 
 iban = "FR" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=12))
@@ -104,9 +105,12 @@ class Customer():
             VALUES (%s, %s, %s)
             """, (0, iban, id_user_create[0]))
             mydb.commit()
-
+            
+            dashboard.user_id = id_user_create
             error_label.configure(text="Your account was created successfully", text_color="green")
-            self.log_menu()
+
+            dashboard.user_id = id_user_create
+            dashboard.display_dashboard() 
 
         submit_button = ctk.CTkButton(root, text="Submit", command=submit)
         submit_button.place(relx=0.5, rely=0.6, anchor="center")
@@ -175,6 +179,11 @@ class Customer():
 
     def log_menu(self):
         clear_screen()
+        # self.logo = ctk.CTkImage(light_image = Image.open(r"C:/Users/elodi/OneDrive/Desktop/Projets plateforme/LOGICIEL/Budget Buddy/budget_buddy/assets/pictures/logo.png"),
+        #                     size = (150,250,))
+        # image_label = ctk.CTkLabel(root, text = "", image = self.logo)
+        # image_label.image = self.logo
+        # image_label.place(relx = 0, y = 30, anchor = "w")
 
         label = ctk.CTkLabel(root, text = "Budget Buddy")
         label.pack(pady=10)
@@ -182,8 +191,8 @@ class Customer():
         button1 = ctk.CTkButton(root, text="Sign in", command = self.log_in)
         button2 = ctk.CTkButton(root, text = "Sign up", command = self.create_account)
 
-        button1.place(relx = 0.5, rely = 0.4, anchor = "center")
-        button2.place(relx = 0.5, rely = 0.6, anchor = "center")
+        button1.place(relx = 0.7, rely = 0.4, anchor = "center")
+        button2.place(relx = 0.7, rely = 0.6, anchor = "center")
 
 
 user = Customer()
