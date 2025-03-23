@@ -32,9 +32,9 @@ table_account = """
 CREATE TABLE IF NOT EXISTS account (
     id INT AUTO_INCREMENT PRIMARY KEY,
     balance DECIMAL(10,2) NOT NULL DEFAULT 0,
-    iban VARCHAR(34) NOT NULL,
+    iban VARCHAR(34) UNIQUE NOT NULL,
     user_id INT NOT NULL,
-    type VARCHAR(50) DEFAULT 'courant',
+    type VARCHAR(50) DEFAULT 'current',
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 )
 """
