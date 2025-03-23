@@ -15,7 +15,7 @@ class Dashboard:
         self.transaction = None
 
     def get_user_info(self):
-        """Récupère les informations de l'utilisateur et ses comptes"""
+        """Gets user information and related accounts"""
         cursor.execute("""
             SELECT id, first_name, name
             FROM user
@@ -26,36 +26,36 @@ class Dashboard:
         if user_info:
             self.user_id, self.first_name, self.name = user_info
            
-            # Initialiser la classe Transaction
+            # Initialize class Transaction
             self.transaction = Transaction(self.user_id)
 
-            # Récupération des comptes de l'utilisateur
+            # gets all accounts of user
             cursor.execute("""
                 SELECT id, type, balance, iban FROM account WHERE user_id = %s
             """, (self.user_id,))
             self.accounts = cursor.fetchall()
 
-            # Définit le premier compte comme sélectionné par défaut
+            # Sets the first account as default
             if self.accounts:
                 self.selected_account_id = self.accounts[0][0]
         else:
             self.user_id, self.first_name, self.name, self.accounts = None, None, None, []
 
     def update_account_info(self, choice=None):
-        """Met à jour les informations du compte sélectionné"""
+        """Updates information with account selected"""
         account_type = self.account_options.get()
        
         for acc_id, acc_type, balance, iban in self.accounts:
             if acc_type.capitalize() == account_type:
                 self.selected_account_id = acc_id
-                self.balance_var.set(f"Solde : {balance}€")
+                self.balance_var.set(f"Balance : {balance}€")
                 self.iban_var.set(f"IBAN : {iban}")
                 self.load_transactions()
                 self.create_monthly_stats()
                 break
 
     def add_savings_account(self):
-        """Ajoute un compte épargne à l'utilisateur"""
+        """Add a savings account for user"""
         import random
         import string
        
@@ -64,26 +64,26 @@ class Dashboard:
         cursor.execute("""
             INSERT INTO account (balance, iban, user_id, type)
             VALUES (%s, %s, %s, %s)
-        """, (0, iban, self.user_id, "epargne"))
+        """, (0, iban, self.user_id, "savings"))
        
         mydb.commit()
        
-        # Rafraîchir la liste des comptes
+        # Updates the accounts list
         self.get_user_info()
        
-        # Afficher un message de succès
-        CTkMessagebox(title="Succès", message="Compte épargne ajouté avec succès!", icon="check")
+        # Displays confirmation message
+        CTkMessagebox(title="Success", message="Savings account successfully created!", icon="check")
        
-        # Rafraîchir l'affichage
+        # Updates the display
         self.display_dashboard()
 
     def create_monthly_stats(self):
-        """Crée un graphique des dépenses/revenus mensuels"""
-        # Nettoyer le cadre du graphique
+        """Creates a chart with monthly incomes and expenditure"""
+        # Clean display frame
         for widget in self.stats_frame.winfo_children():
             widget.destroy()
            
-        # Récupération des données du mois en cours
+        # Gets the data for current month
         current_date = datetime.datetime.now()
         start_of_month = datetime.datetime(current_date.year, current_date.month, 1).strftime('%Y-%m-%d')
         end_of_month = current_date.strftime('%Y-%m-%d')
@@ -103,44 +103,44 @@ class Dashboard:
             income = income if income else 0
             expense = expense if expense else 0
            
-            # Création du graphique
+            # Creates chart
             figure = plt.Figure(figsize=(5, 2), dpi=100)
             ax = figure.add_subplot(111)
            
-            labels = ['Revenus', 'Dépenses']
+            labels = ['Income', 'Expenditure']
             values = [income, expense]
             colors = ['#4CAF50', '#E53935']
            
             ax.bar(labels, values, color=colors)
-            ax.set_title('Résumé du mois')
+            ax.set_title('Monthly summary')
            
-            # Ajouter le graphique au cadre
+            # Add chart to the frame
             canvas = FigureCanvasTkAgg(figure, self.stats_frame)
             canvas.get_tk_widget().pack(fill='both', expand=True)
            
-            # Afficher des statistiques textuelles
+            # Display text statistics
             stats_label = ctk.CTkLabel(
                 self.stats_frame,
-                text=f"Revenus: {income}€ | Dépenses: {expense}€ | Bilan: {income-expense}€",
+                text=f"Income: {income}€ | Expenditure: {expense}€ | Summary: {income-expense}€",
                 font=("Arial", 14)
             )
             stats_label.pack(pady=10)
            
-            # Afficher une alerte si le solde est faible
+            # Display an alert if balance is low
             if self.accounts and self.selected_account_id:
                 for acc_id, acc_type, balance, iban in self.accounts:
                     if acc_id == self.selected_account_id and balance < 100:
                         alert_label = ctk.CTkLabel(
                             self.stats_frame,
-                            text="⚠️ ALERTE: Votre solde est faible!",
+                            text="⚠️ ALERT: Your account balance is low!",
                             font=("Arial", 14, "bold"),
                             text_color="red"
                         )
                         alert_label.pack(pady=5)
 
     def load_transactions(self):
-        """Charge les transactions récentes pour le compte sélectionné"""
-        # Nettoyer le cadre des transactions
+        """Loads recent transactions for the account selected"""
+        # Reset the frame
         for widget in self.transactions_frame.winfo_children():
             widget.destroy()
            
@@ -155,22 +155,22 @@ class Dashboard:
         transactions = cursor.fetchall()
        
         if transactions:
-            # Ajouter un en-tête
+            #  Add header
             header_frame = ctk.CTkFrame(self.transactions_frame)
             header_frame.pack(fill="x", pady=(0, 5))
            
             ctk.CTkLabel(header_frame, text="Date", width=100).pack(side="left", padx=5)
             ctk.CTkLabel(header_frame, text="Description", width=200).pack(side="left", padx=5)
-            ctk.CTkLabel(header_frame, text="Montant", width=100).pack(side="left", padx=5)
+            ctk.CTkLabel(header_frame, text="Amount", width=100).pack(side="left", padx=5)
            
-            # Ajouter les transactions
+            # Add transactions
             for date, desc, amount, trans_type in transactions:
                 trans_frame = ctk.CTkFrame(self.transactions_frame, fg_color="transparent")
                 trans_frame.pack(fill="x", pady=2)
                
                 date_str = date.strftime("%d/%m/%Y")
                
-                # Formater le montant avec couleur selon le type
+                # Format the amount based on the type (income, spending)
                 if trans_type in ["deposit", "incoming_transfer"]:
                     amount_str = f"+{amount}€"
                     amount_color = "green"
@@ -182,34 +182,34 @@ class Dashboard:
                 ctk.CTkLabel(trans_frame, text=desc, width=200).pack(side="left", padx=5)
                 ctk.CTkLabel(trans_frame, text=amount_str, width=100, text_color=amount_color).pack(side="left", padx=5)
         else:
-            no_trans = ctk.CTkLabel(self.transactions_frame, text="Aucune transaction récente.")
+            no_trans = ctk.CTkLabel(self.transactions_frame, text="No recent transaction.")
             no_trans.pack(pady=20)
 
     def display_dashboard(self):
-        """Affiche le tableau de bord principal"""
+        """Displays main dashboard"""
         self.get_user_info()
         clear_screen()
        
-        # En-tête
-        header = create_header(f"Tableau de Bord - {self.first_name} {self.name}")
+        # Header
+        header = create_header(f"Dashboard - {self.first_name} {self.name}")
        
-        # Cadre principal
+        # Main frame
         main_frame = ctk.CTkFrame(root)
         main_frame.pack(padx=20, pady=20, fill="both", expand=True)
        
-        # Panel gauche - Sélection de compte et info
+        # Left panel - Account selection and info
         left_panel = ctk.CTkFrame(main_frame)
         left_panel.pack(side="left", fill="both", expand=True, padx=10, pady=10)
        
-        # Sélecteur de compte
+        # Account selection
         account_frame = ctk.CTkFrame(left_panel)
         account_frame.pack(pady=10, fill="x")
        
-        account_label = ctk.CTkLabel(account_frame, text="Compte:", font=("Arial", 14))
+        account_label = ctk.CTkLabel(account_frame, text="Account:", font=("Arial", 14))
         account_label.pack(side="left", padx=10)
        
         if self.accounts:
-            # Menu déroulant des comptes
+            # Dropdown menu
             self.account_options = ctk.CTkComboBox(
                 account_frame,
                 values=[acc_type.capitalize() for _, acc_type, _, _ in self.accounts],
@@ -218,8 +218,8 @@ class Dashboard:
             self.account_options.pack(side="left", padx=10, fill="x", expand=True)
             self.account_options.set(self.accounts[0][1].capitalize())
            
-            # Informations du compte
-            self.balance_var = ctk.StringVar(value=f"Solde : {self.accounts[0][2]}€")
+            # Account information
+            self.balance_var = ctk.StringVar(value=f"Balance : {self.accounts[0][2]}€")
             self.iban_var = ctk.StringVar(value=f"IBAN : {self.accounts[0][3]}")
            
             info_frame = ctk.CTkFrame(left_panel)
@@ -231,30 +231,30 @@ class Dashboard:
             iban_label = ctk.CTkLabel(info_frame, textvariable=self.iban_var, font=("Arial", 12))
             iban_label.pack(pady=5)
            
-            # Bouton pour ajouter un compte épargne
+            # Button to add a savings account
             add_savings_button = ctk.CTkButton(
                 left_panel,
-                text="Ajouter un compte épargne",
+                text="Add a savings account",
                 command=self.add_savings_account
             )
             add_savings_button.pack(pady=10, fill="x")
            
-            # Bouton pour les transactions
+            # Buttons for transactions
             transaction_button = ctk.CTkButton(
                 left_panel,
-                text="Gérer mes transactions",
+                text="Manage my transactions",
                 command=self.transaction.display_transaction
             )
             transaction_button.pack(pady=10, fill="x")
            
-            # Transactions récentes
-            trans_label = ctk.CTkLabel(left_panel, text="Transactions récentes", font=("Arial", 16, "bold"))
+            # Recent transactions
+            trans_label = ctk.CTkLabel(left_panel, text="Recent transactions", font=("Arial", 16, "bold"))
             trans_label.pack(pady=(20, 10))
            
             self.transactions_frame = ctk.CTkFrame(left_panel)
             self.transactions_frame.pack(fill="both", expand=True, pady=5)
            
-            # Panel droit - Statistiques et graphiques
+            # Right panel - Statistics and chart
             right_panel = ctk.CTkFrame(main_frame)
             right_panel.pack(side="right", fill="both", expand=True, padx=10, pady=10)
            
@@ -264,22 +264,22 @@ class Dashboard:
             self.stats_frame = ctk.CTkFrame(right_panel)
             self.stats_frame.pack(fill="both", expand=True, pady=5)
            
-            # Charger les données initiales
+            # Load initial data
             self.load_transactions()
             self.create_monthly_stats()
         else:
             no_account_label = ctk.CTkLabel(
                 left_panel,
-                text="Vous n'avez pas encore de compte.",
+                text="You have no accoutn yet.",
                 font=("Arial", 14)
             )
             no_account_label.pack(pady=20)
        
-        # Bouton déconnexion
+        # Log out button
         from customer import Customer
         logout_button = ctk.CTkButton(
             main_frame,
-            text="Déconnexion",
+            text="Sign out",
             command=lambda: Customer().log_menu(),
             fg_color="#E53935",
             hover_color="#C62828"

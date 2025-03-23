@@ -12,8 +12,8 @@ mydb = mysql.connector.connect(
 )
 cursor = mydb.cursor(buffered=True)
 
-# Création des tables
-# Table utilisateur
+# Table creation
+# User table
 table_user = """
 CREATE TABLE IF NOT EXISTS user (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS user (
 cursor.execute(table_user)
 mydb.commit()
 
-# Table des comptes
+# Account table
 table_account = """
 CREATE TABLE IF NOT EXISTS account (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS account (
 cursor.execute(table_account)
 mydb.commit()
 
-# Table des catégories de transactions
+# Category table
 table_category = """
 CREATE TABLE IF NOT EXISTS category (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -51,21 +51,21 @@ CREATE TABLE IF NOT EXISTS category (
 cursor.execute(table_category)
 mydb.commit()
 
-# Vérifier si des catégories existent déjà
+# Check if categories exist
 cursor.execute("SELECT COUNT(*) FROM category")
 category_count = cursor.fetchone()[0]
 
-# Si aucune catégorie n'existe, en ajouter des par défaut
+# If no category exists, create one by default
 if category_count == 0:
     default_categories = [
-        "Alimentation", "Logement", "Transport", "Loisirs", 
-        "Santé", "Éducation", "Salaire", "Cadeau", "Autres"
+        "Food", "Housing", "Transport", "Leisure", 
+        "Health", "Education", "Wages", "Gifts", "Other"
     ]
     for category in default_categories:
         cursor.execute("INSERT INTO category (name) VALUES (%s)", (category,))
     mydb.commit()
 
-# Table des transactions
+# Transaction table
 table_transaction = """
 CREATE TABLE IF NOT EXISTS transaction (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -83,11 +83,11 @@ CREATE TABLE IF NOT EXISTS transaction (
 cursor.execute(table_transaction)
 mydb.commit()
 
-# Vérifier si des administrateurs existent
+# Check if administrators exist
 cursor.execute("SELECT COUNT(*) FROM user WHERE is_admin = 1")
 admin_count = cursor.fetchone()[0]
 
-# Créer un administrateur par défaut si aucun n'existe
+# Create an admin by default if none exist
 if admin_count == 0:
     import bcrypt
     default_password = "Admin@2023"

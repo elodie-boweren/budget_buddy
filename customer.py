@@ -9,9 +9,9 @@ import os
 from common import *
 from dashboard import Dashboard
 
-# Liste des emails administrateurs
+# List of adminstrator emails
 admin_emails = [
-    "budgetbuddy@laplateforme.io",
+    "Budgetbuddy@laplateforme.io",
     "Budgetbuddy1@laplateforme.io",
     "Budgetbuddy2@laplateforme.io",
     "Budgetbuddy3@laplateforme.io",
@@ -28,7 +28,7 @@ class Customer:
         self.dashboard = None
         
     def generate_iban(self):
-        """Génère un IBAN aléatoire au format français"""
+        """Create a random IBAN in French format"""
         country_code = "FR"
         check_digits = ''.join(random.choices(string.digits, k=2))
         bank_code = ''.join(random.choices(string.digits, k=5))
@@ -38,41 +38,34 @@ class Customer:
         return f"{country_code}{check_digits}{bank_code}{branch_code}{account_number}"
 
     def correct_password(self, password):
-        """Vérifie si le mot de passe respecte les critères de sécurité"""
-        # Doit contenir au moins: 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial, 10 caractères
+        """Checks if the password complies with security conditions"""
+        # Must contain at least: 1 upper case, 1 lower case, 1 number, 1 special caracter, 10 caracters
         pattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$'
         return bool(re.match(pattern, password))
-    
-    def toggle_password_visibility(self):
-        """Affiche ou masque le mot de passe"""
-        if hasattr(self, 'show_password') and self.show_password.get():
-            self.password.configure(show="")
-        else:
-            self.password.configure(show="*")
 
     def password_visibility(self):
-        """Affiche ou masque le mot de passe de connexion"""
+        """Show or hides the password"""
         if hasattr(self, 'show_password') and self.show_password.get():
             self.enter_password.configure(show="")
         else:
             self.enter_password.configure(show="*")
 
     def log_menu(self):
-        """Affiche le menu de connexion/inscription"""
+        """Displays the log-in menu"""
         from database import cursor, mydb
         
         clear_screen()
         
-        # En-tête avec logo
+        # Header with logo
         header = create_header("Budget Buddy")
         
-        # Contenu principal
+        # Main content
         main_frame = ctk.CTkFrame(root)
         main_frame.pack(pady=20, padx=20, fill="both", expand=True)
         
         # Description
         welcome_label = ctk.CTkLabel(main_frame, 
-                                    text="Votre allié financier pour des dépenses malines et un budget équilibré",
+                                    text="your financial ally for clever speinding and balanced budget",
                                     font=ctk.CTkFont(size=14))
         welcome_label.pack(pady=(20, 40))
         
@@ -80,37 +73,37 @@ class Customer:
         btn_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         btn_frame.pack(pady=20)
         
-        button_signin = ctk.CTkButton(btn_frame, text="Se connecter", width=200, height=50,
+        button_signin = ctk.CTkButton(btn_frame, text="Sign in", width=200, height=50,
                                      font=ctk.CTkFont(size=16), command=self.log_in)
         button_signin.pack(pady=10)
         
-        button_signup = ctk.CTkButton(btn_frame, text="Créer un compte", width=200, height=50,
+        button_signup = ctk.CTkButton(btn_frame, text="Create an account", width=200, height=50,
                                      font=ctk.CTkFont(size=16), command=self.create_account)
         button_signup.pack(pady=10)
         
         create_footer()
 
     def create_account(self):
-        """Affiche le formulaire de création de compte"""
+        """Displays the entry boxes to create an account"""
         from database import cursor, mydb
         
         clear_screen()
         
-        header = create_header("Création de compte")
+        header = create_header("Account creation")
         
-        # Contenu principal
+        # Main content
         main_frame = ctk.CTkFrame(root)
         main_frame.pack(pady=20, padx=20, fill="both", expand=True)
         
-        # Formulaire
+        # Entry area
         form_frame = ctk.CTkFrame(main_frame)
         form_frame.pack(pady=20, padx=20, fill="x")
         
-        # Champs du formulaire
-        self.name = ctk.CTkEntry(form_frame, width=300, placeholder_text="Nom")
+        # Entry fields
+        self.name = ctk.CTkEntry(form_frame, width=300, placeholder_text="Name")
         self.name.pack(pady=10)
         
-        self.firstname = ctk.CTkEntry(form_frame, width=300, placeholder_text="Prénom")
+        self.firstname = ctk.CTkEntry(form_frame, width=300, placeholder_text="First name")
         self.firstname.pack(pady=10)
         
         self.email = ctk.CTkEntry(form_frame, width=300, placeholder_text="Email")
@@ -119,43 +112,43 @@ class Customer:
         password_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
         password_frame.pack(pady=10, fill="x")
         
-        self.password = ctk.CTkEntry(password_frame, width=300, placeholder_text="Mot de passe", show="*")
-        self.password.pack(side="left", padx=(0, 10))
+        self.enter_password = ctk.CTkEntry(password_frame, width=300, placeholder_text="Password", show="*")
+        self.enter_password.pack(pady = 10)
         
         self.show_password = ctk.BooleanVar(value=False)
-        show_password_checkbox = ctk.CTkCheckBox(password_frame, text="Afficher", 
+        show_password_checkbox = ctk.CTkCheckBox(password_frame, text="Display", 
                                                 variable=self.show_password, 
-                                                command=self.toggle_password_visibility)
-        show_password_checkbox.pack(side="left")
+                                                command=self.password_visibility)
+        show_password_checkbox.place(x=580, y = 17)
         
-        # Message d'information sur le mot de passe
+        # Password information message
         password_info = ctk.CTkLabel(form_frame, 
-                                    text="Le mot de passe doit contenir au moins 10 caractères,\nune majuscule, une minuscule, un chiffre et un caractère spécial.",
+                                    text="The password must contain at least:\n 1 upper case, 1 lower case, 1 number, 1 special caracter, 10 caracters.",
                                     font=ctk.CTkFont(size=12),
                                     text_color="#aaaaaa")
         password_info.pack(pady=(0, 20))
         
-        # Affichage des erreurs
+        # Displays errors
         self.error_label = ctk.CTkLabel(form_frame, text="", text_color="red")
         self.error_label.pack(pady=10)
         
-        # Boutons
+        # Buttons
         button_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         button_frame.pack(pady=20, fill="x")
         
-        back_button = ctk.CTkButton(button_frame, text="Retour", 
+        back_button = ctk.CTkButton(button_frame, text="Back", 
                                    width=140, command=self.log_menu,
                                    fg_color="#555555", hover_color="#333333")
         back_button.pack(side="left", padx=20)
         
-        submit_button = ctk.CTkButton(button_frame, text="Créer mon compte", 
+        submit_button = ctk.CTkButton(button_frame, text="Create my account", 
                                      width=200, command=self.submit_account)
         submit_button.pack(side="right", padx=20)
         
         create_footer()
     
     def submit_account(self):
-        """Traite la soumission du formulaire de création de compte"""
+        """Processes the submission for account creation"""
         from database import cursor, mydb
         
         name = self.name.get()
@@ -163,135 +156,135 @@ class Customer:
         email = self.email.get()
         password = self.password.get()
         
-        # Validation des champs
+        # Check fields completed
         if not name or not firstname or not email or not password:
-            self.error_label.configure(text="Tous les champs sont obligatoires.")
+            self.error_label.configure(text="All fields are mandatory.")
             return
         
-        # Validation de l'email
+        # Check email format
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
-            self.error_label.configure(text="Format d'email invalide.")
+            self.error_label.configure(text="Invalid email format.")
             return
             
-        # Validation du mot de passe
+        # Validating password
         if not self.correct_password(password):
-            self.error_label.configure(text="Le mot de passe ne respecte pas les critères de sécurité.")
+            self.error_label.configure(text="The password does not comply with security criterias.")
             return
         
-        # Vérification si l'email existe déjà
+        # Checks if email already used
         cursor.execute("SELECT * FROM user WHERE email = %s", (email,))
         if cursor.fetchone():
-            self.error_label.configure(text="Cet email est déjà utilisé.")
+            self.error_label.configure(text="this email is already in use.")
             return
         
-        # Hashage du mot de passe
+        # Encrypting password
         salt = bcrypt.gensalt()
         hash_password = bcrypt.hashpw(password.encode('utf-8'), salt)
         
-        # Insertion de l'utilisateur
+        # Creation of user
         cursor.execute("""
             INSERT INTO user (name, first_name, email, password)
             VALUES (%s, %s, %s, %s)
         """, (name, firstname, email, hash_password))
         mydb.commit()
         
-        # Récupération de l'ID utilisateur
+        # Get user ID
         cursor.execute("SELECT id FROM user WHERE email = %s", (email,))
         user_id = cursor.fetchone()[0]
         
-        # Création d'un compte courant par défaut
+        # Creation of standard bank account
         iban = self.generate_iban()
         cursor.execute("""
             INSERT INTO account (balance, iban, user_id, type)
             VALUES (%s, %s, %s, %s)
-        """, (0, iban, user_id, "courant"))
+        """, (0, iban, user_id, "current"))
         mydb.commit()
         
-        # Afficher un message de succès
-        show_success("Compte créé", "Votre compte a été créé avec succès !")
+        # Confirmation message
+        show_success("Account created", "Your account was successfully created !")
         
-        # Redirection vers la page de connexion
+        # Back to the log-in page
         self.log_in()
 
     def log_in(self):
-        """Affiche le formulaire de connexion"""
+        """Displays log-in fields"""
         from database import cursor, mydb
         
         clear_screen()
         
         header = create_header("Connexion")
         
-        # Formulaire de connexion
+        # Log-in area
         main_frame = ctk.CTkFrame(root)
         main_frame.pack(pady=20, padx=20, fill="both", expand=True)
         
         form_frame = ctk.CTkFrame(main_frame)
         form_frame.pack(pady=20, padx=20, fill="x")
         
-        # Champs de connexion
+        # Log-in fields
         self.enter_email = ctk.CTkEntry(form_frame, width=300, placeholder_text="Email")
         self.enter_email.pack(pady=10)
         
         password_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
         password_frame.pack(pady=10, fill="x")
         
-        self.enter_password = ctk.CTkEntry(password_frame, width=300, placeholder_text="Mot de passe", show="*")
+        self.enter_password = ctk.CTkEntry(password_frame, width=300, placeholder_text="Password", show="*")
         self.enter_password.pack(side="left", padx=(0, 10))
         
         self.show_password = ctk.BooleanVar(value=False)
-        show_password_checkbox = ctk.CTkCheckBox(password_frame, text="Afficher", 
+        show_password_checkbox = ctk.CTkCheckBox(password_frame, text="Display", 
                                                 variable=self.show_password, 
                                                 command=self.password_visibility)
         show_password_checkbox.pack(side="left")
         
-        # Message d'erreur
+        # Error message
         self.login_error = ctk.CTkLabel(form_frame, text="", text_color="red")
         self.login_error.pack(pady=10)
         
-        # Boutons
+        # Buttons
         button_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         button_frame.pack(pady=20, fill="x")
         
-        back_button = ctk.CTkButton(button_frame, text="Retour", 
+        back_button = ctk.CTkButton(button_frame, text="Back", 
                                    width=140, command=self.log_menu,
                                    fg_color="#555555", hover_color="#333333")
         back_button.pack(side="left", padx=20)
         
-        connect_button = ctk.CTkButton(button_frame, text="Se connecter", 
+        connect_button = ctk.CTkButton(button_frame, text="Sign in", 
                                       width=200, command=self.validate_login)
         connect_button.pack(side="right", padx=20)
         
         create_footer()
     
     def validate_login(self):
-        """Valide les informations de connexion"""
+        """Validates connexion info"""
         from database import cursor, mydb
         
         email = self.enter_email.get()
         entered_password = self.enter_password.get()
         
         if not email or not entered_password:
-            self.login_error.configure(text="Veuillez remplir tous les champs.")
+            self.login_error.configure(text="All fields are mandatory.")
             return
         
-        # Vérification des identifiants
+        # Check the email
         cursor.execute("SELECT id, password, is_admin FROM user WHERE email = %s", (email,))
         result = cursor.fetchone()
         
         if result:
             user_id, stored_password, is_admin = result
             
-            # Vérification du mot de passe
+            # Check password
             if bcrypt.checkpw(entered_password.encode('utf-8'), stored_password.encode('utf-8')):
-                # Initialiser le dashboard avec l'ID utilisateur
+                # Initialize dashboard with user's information
                 self.dashboard = Dashboard(user_id)
                 
-                # Rediriger vers le menu approprié
+                # Go to the correct dashboard
                 if is_admin or email in admin_emails:
                     admin_menu()
                 else:
                     self.dashboard.display_dashboard()
             else:
-                self.login_error.configure(text="Mot de passe incorrect.")
+                self.login_error.configure(text="Invalid password.")
         else:
-            self.login_error.configure(text="Email non reconnu.")
+            self.login_error.configure(text="Unknown email.")

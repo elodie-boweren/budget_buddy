@@ -1,22 +1,22 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 
-# Configuration globale de l'application
+# General config of the app
 APP_NAME = "Budget Buddy"
-PRIMARY_COLOR = "#2d8659"  # Vert foncé
-SECONDARY_COLOR = "#3b3b3b"  # Gris foncé
-TEXT_COLOR = "#ffffff"  # Blanc
-ACCENT_COLOR = "#4CAF50"  # Vert clair
+PRIMARY_COLOR = "#2d8659"  # Dark green
+SECONDARY_COLOR = "#3b3b3b"  # Dark grey
+TEXT_COLOR = "#ffffff"  # White
+ACCENT_COLOR = "#4CAF50"  # Light green
 
-# Configuration globale de CustomTkinter
+# Global config of CustomTkinter
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("green")
 
-# Variables globales
+# global variables
 root = None
 
 def init_root(size="800x600"):
-    """Initialise la fenêtre principale"""
+    """Initialize main window"""
     global root
     root = ctk.CTk()
     root.title(APP_NAME)
@@ -25,31 +25,31 @@ def init_root(size="800x600"):
     return root
 
 def clear_screen():
-    """Efface tous les widgets de la fenêtre principale"""
+    """CLears all widgets from main screen"""
     if root:
         for widget in root.winfo_children():
             widget.destroy()
 
 def show_info(title, message):
-    """Affiche un message d'information"""
+    """Display info message"""
     CTkMessagebox(title=title, message=message, icon="info")
 
 def show_error(title, message):
-    """Affiche un message d'erreur"""
+    """Displays error message"""
     CTkMessagebox(title=title, message=message, icon="cancel")
 
 def show_success(title, message):
-    """Affiche un message de succès"""
+    """Displays confirmation message"""
     CTkMessagebox(title=title, message=message, icon="check")
 
 def show_confirmation(title, message):
-    """Affiche une boîte de dialogue de confirmation"""
+    """Displays confirmation window"""
     msg = CTkMessagebox(title=title, message=message, icon="question", 
-                        option_1="Oui", option_2="Non")
-    return msg.get() == "Oui"
+                        option_1="Yes", option_2="No")
+    return msg.get() == "Yes"
 
 def create_header(title):
-    """Crée un en-tête standardisé pour les pages"""
+    """Standard header for all pages"""
     header_frame = ctk.CTkFrame(root, height=80, fg_color=PRIMARY_COLOR)
     header_frame.pack(fill="x", pady=(0, 20))
     
@@ -61,11 +61,11 @@ def create_header(title):
     return header_frame
 
 def create_footer():
-    """Crée un pied de page standardisé"""
+    """Standard footer"""
     footer_frame = ctk.CTkFrame(root, height=50, fg_color=SECONDARY_COLOR)
     footer_frame.pack(fill="x", side="bottom")
     
-    footer_label = ctk.CTkLabel(footer_frame, text=f"{APP_NAME} - Votre allié financier",
+    footer_label = ctk.CTkLabel(footer_frame, text=f"{APP_NAME} - Your financial ally",
                                font=ctk.CTkFont(size=12),
                                text_color=TEXT_COLOR)
     footer_label.place(relx=0.5, rely=0.5, anchor="center")
@@ -73,30 +73,30 @@ def create_footer():
     return footer_frame
 
 def admin_menu():
-    """Affiche le menu administrateur"""
+    """Displays admin dashboard"""
     clear_screen()
-    header = create_header("Menu Administrateur")
+    header = create_header("Administrator dashboard")
     
-    # Contenu principal
+    # Main content
     content_frame = ctk.CTkFrame(root)
     content_frame.pack(fill="both", expand=True, padx=20, pady=20)
     
-    # Options administrateur
-    btn_users = ctk.CTkButton(content_frame, text="Gestion des utilisateurs", 
+    # Administrator options
+    btn_users = ctk.CTkButton(content_frame, text="Manage users", 
                              height=40, font=ctk.CTkFont(size=14))
     btn_users.pack(pady=10, padx=20, fill="x")
     
-    btn_accounts = ctk.CTkButton(content_frame, text="Gestion des comptes", 
+    btn_accounts = ctk.CTkButton(content_frame, text="Manage accounts", 
                                 height=40, font=ctk.CTkFont(size=14))
     btn_accounts.pack(pady=10, padx=20, fill="x")
     
-    btn_stats = ctk.CTkButton(content_frame, text="Statistiques globales", 
+    btn_stats = ctk.CTkButton(content_frame, text="Global statistics", 
                              height=40, font=ctk.CTkFont(size=14))
     btn_stats.pack(pady=10, padx=20, fill="x")
     
-    # Bouton de déconnexion
+    # Log-out button
     from customer import user
-    btn_logout = ctk.CTkButton(content_frame, text="Déconnexion", 
+    btn_logout = ctk.CTkButton(content_frame, text="Sign out", 
                               height=40, font=ctk.CTkFont(size=14),
                               fg_color="#E53935", hover_color="#C62828",
                               command=user.log_menu)
