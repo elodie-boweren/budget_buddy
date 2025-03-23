@@ -24,22 +24,31 @@ class Transaction():
         entry_amount = ctk.CTkEntry(root, width=220, placeholder_text="How much do you want to deposit ?")
         entry_amount.place(relx=0.5, rely=0.4, anchor="center")
 
-        def validate():
+        def validate_deposit():
             self.amount = self.enter_amount.get()
             new_balance = self.user_balance + self.amount
             cursor.execute("UPDATE accout SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
             mydb.commit()
             self.user_balance = new_balance
 
-        validate_button = ctk.CTkButton(root, text="Deposit", command =lambda: validate())
+        validate_button = ctk.CTkButton(root, text="Deposit", command =lambda: validate_deposit())
         validate_button.place(relx=0.5, rely=0.5, anchor = "center")
 
-    def withdrawal(self, amount):
-        self.amount = amount
-        new_balance = self.user_balance - self.amount
-        cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
-        mydb.commit()
-        self.user_balance = new_balance
+    def withdrawal(self):
+        clear_screen()
+
+        entry_withdrawal = ctk.CTkEntry(root, width=220, placeholder_text="How much do you want to withdraw ?")
+        entry_withdrawal.place(relx=0.5, rely=0.4, anchor="center")
+
+        def validate_withdrawal():
+            self.amount = self.entry_withdrawal
+            new_balance = self.user_balance - self.amount
+            cursor.execute("UPDATE account SET balance = %s WHERE user_id = %s", (new_balance, self.user_id))
+            mydb.commit()
+            self.user_balance = new_balance
+
+        validate_button = ctk.CTkButton(root, text="Deposit", command =lambda: validate_withdrawal())
+        validate_button.place(relx=0.5, rely=0.5, anchor = "center")
 
     def display_transaction(self):
         clear_screen()
