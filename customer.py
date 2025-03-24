@@ -1,11 +1,9 @@
 import customtkinter as ctk
-import mysql.connector
 import random
 import string
 import re
 import bcrypt
 from PIL import Image, ImageTk
-import os
 from common import AppManager
 from dashboard import Dashboard
 
@@ -66,20 +64,18 @@ class Customer:
         
         # Description
         welcome_label = ctk.CTkLabel(main_frame, 
-                                    text="your financial ally for clever speinding and balanced budget",
+                                    text="your financial ally for clever spending and balanced budget",
                                     font=ctk.CTkFont(size=14))
         welcome_label.pack(pady=(20, 40))
         
-        # Boutons de connexion/inscription
+        # connexion button
         btn_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         btn_frame.pack(pady=20)
         
-        button_signin = ctk.CTkButton(btn_frame, text="Sign in", width=200, height=50,
-                                     font=ctk.CTkFont(size=16), command=self.log_in)
+        button_signin = ctk.CTkButton(btn_frame, text="Sign in", width=200, height=50,font=ctk.CTkFont(size=16), command=self.log_in)
         button_signin.pack(pady=10)
         
-        button_signup = ctk.CTkButton(btn_frame, text="Create an account", width=200, height=50,
-                                     font=ctk.CTkFont(size=16), command=self.create_account)
+        button_signup = ctk.CTkButton(btn_frame, text="Create an account", width=200, height=50,font=ctk.CTkFont(size=16), command=self.create_account)
         button_signup.pack(pady=10)
         
         self.app_manager.create_footer()

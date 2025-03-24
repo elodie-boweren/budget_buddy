@@ -1,5 +1,4 @@
 import customtkinter as ctk
-from CTkMessagebox import CTkMessagebox
 
 # General config of the app
 APP_NAME = "Budget Buddy"
@@ -28,24 +27,6 @@ class AppManager:
         """Clears all widgets from main screen"""
         for widget in self.root.winfo_children():
             widget.destroy()
-    
-    def show_info(self, title, message):
-        """Display info message"""
-        CTkMessagebox(title=title, message=message, icon="info", option_1="ok")
-    
-    def show_error(self, title, message):
-        """Displays error message"""
-        CTkMessagebox(title=title, message=message, icon="cancel", option_1="ok")
-    
-    def show_success(self, title, message):
-        """Displays confirmation message"""
-        CTkMessagebox(title=title, message=message, icon="check", option_1="ok")
-    
-    def show_confirmation(self, title, message):
-        """Displays confirmation window"""
-        msg = CTkMessagebox(title=title, message=message, icon="question", 
-                            option_1="Yes", option_2="No")
-        return msg.get() == "Yes"
     
     def create_header(self, title):
         """Standard header for all pages"""
