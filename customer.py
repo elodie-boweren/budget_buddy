@@ -137,13 +137,10 @@ class Customer:
         button_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         button_frame.pack(pady=20, fill="x")
         
-        back_button = ctk.CTkButton(button_frame, text="Back", 
-                                   width=140, command=self.log_menu,
-                                   fg_color="#555555", hover_color="#333333")
+        back_button = ctk.CTkButton(button_frame, text="Back", width=140, command=self.log_menu,fg_color="#555555", hover_color="#333333")
         back_button.pack(side="left", padx=20)
         
-        submit_button = ctk.CTkButton(button_frame, text="Create my account", 
-                                    width=200, command=self.submit_account)
+        submit_button = ctk.CTkButton(button_frame, text="Create my account", width=200, command=self.submit_account)
         submit_button.pack(side="right", padx=20)
         
         self.app_manager.create_footer()
