@@ -2,7 +2,6 @@ import customtkinter as ctk
 from database import *
 from common import *
 from transaction import Transaction
-from CTkMessagebox import CTkMessagebox
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import datetime
@@ -70,10 +69,7 @@ class Dashboard:
        
         # Updates the accounts list
         self.get_user_info()
-       
-        # Displays confirmation message
-        CTkMessagebox(title="Success", message="Savings account successfully created!", icon="check")
-       
+
         # Updates the display
         self.display_dashboard()
 

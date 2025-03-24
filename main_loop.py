@@ -2,10 +2,8 @@ import customtkinter as ctk
 import mysql.connector
 from dotenv import load_dotenv
 import os
-from dashboard import Dashboard
 from customer import Customer
 from database import *
-from transaction import Transaction
 from common import *
 
 # load variables

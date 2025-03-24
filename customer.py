@@ -1,11 +1,8 @@
 import customtkinter as ctk
-import mysql.connector
 import random
 import string
 import re
 import bcrypt
-from PIL import Image, ImageTk
-import os
 from common import *
 from dashboard import Dashboard
 
@@ -200,11 +197,8 @@ class Customer:
         """, (0, iban, user_id, "current"))
         mydb.commit()
         
-        # Confirmation message
-        show_success("Account created", "Your account was successfully created !")
-        
         # Back to the log-in page
-        self.dashboard.display_dashboard()
+        self.log_in()
 
     def log_in(self):
         """Displays log-in fields"""

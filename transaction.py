@@ -1,7 +1,6 @@
 import customtkinter as ctk
 from database import *
 from common import *
-from CTkMessagebox import CTkMessagebox
 import datetime
 from decimal import Decimal
 
@@ -96,9 +95,6 @@ class Transaction:
             # Display updated balance
             self.update_balance()
            
-            # Confirmation message
-            CTkMessagebox(title="Success", message=f"Deposit of {amount}€ completed successfully!", icon="check")
-           
             # Return to transaction screen
             self.display_transaction()
            
@@ -186,10 +182,7 @@ class Transaction:
            
             # Display updated balance
             self.update_balance()
-           
-            # Confirmation message
-            CTkMessagebox(title="Success", message=f"Withdrawal of {amount}€ completed successfully!", icon="check")
-           
+
             # Return to transaction screen
             self.display_transaction()
            
@@ -299,10 +292,7 @@ class Transaction:
            
             # Display updated balance
             self.update_balance()
-           
-            # Confirmation message
-            CTkMessagebox(title="Success", message=f"Transfer of {amount}€ completed successfully!", icon="check")
-           
+
             # Return to transaction screen
             self.display_transaction()
            
