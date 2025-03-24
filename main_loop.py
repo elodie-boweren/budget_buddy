@@ -6,7 +6,7 @@ from dashboard import Dashboard
 from customer import Customer
 from database import *
 from transaction import Transaction
-from common import *
+from common import AppManager
 
 # load variables
 load_dotenv("../.env")
@@ -25,22 +25,17 @@ except mysql.connector.Error as err:
     print(f"Problem connecting to the database: {err}")
     exit(1)
 
-# Interface
-ctk.set_default_color_theme("green")
-ctk.set_appearance_mode("dark")
-
-# Main window
-root = init_root("900x700")
-root.title("Budget Buddy - Your financial ally")
-
 def main():
     """Main function to run programme"""
+    # Initialize the AppManager instead of using init_root
+    app_manager = AppManager("900x700")
+    
     # Initiate the user
-    customer = Customer()
-
-    # Display log-in page
+    customer = Customer(app_manager=app_manager)
     customer.log_menu()
+    
+    # Start the main loop
+    app_manager.get_root().mainloop()
 
 if __name__ == "__main__":
     main()
-    root.mainloop()

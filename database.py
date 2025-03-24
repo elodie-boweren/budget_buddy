@@ -59,7 +59,7 @@ category_count = cursor.fetchone()[0]
 if category_count == 0:
     default_categories = [
         "Food", "Housing", "Transport", "Leisure", 
-        "Health", "Education", "Wages", "Gifts", "Other"
+        "Health", "Education", "Wages", "Gifts", "Internal Transfert", "Other"
     ]
     for category in default_categories:
         cursor.execute("INSERT INTO category (name) VALUES (%s)", (category,))
