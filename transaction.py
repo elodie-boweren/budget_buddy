@@ -76,7 +76,7 @@ class Transaction:
                 return
 
             # Get the category ID
-            category_index = self.category_menu.get().index(category_name)
+            category_index = self.category_menu.cget("values").index(category_name)
             category_id = self.category_ids[category_index]
 
             # Update account balance
@@ -167,7 +167,7 @@ class Transaction:
                 return
 
             # Get the category ID
-            category_index = self.category_menu.get().index(category_name)
+            category_index = self.category_menu.cget("values").index(category_name)
             category_id = self.category_ids[category_index]
 
             # Update the balance
