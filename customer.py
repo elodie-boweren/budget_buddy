@@ -142,7 +142,7 @@ class Customer:
         back_button.pack(side="left", padx=20)
         
         submit_button = ctk.CTkButton(button_frame, text="Create my account", 
-                                     width=200, command=self.submit_account)
+                                    width=200, command=self.submit_account)
         submit_button.pack(side="right", padx=20)
         
         create_footer()
@@ -154,7 +154,7 @@ class Customer:
         name = self.name.get()
         firstname = self.firstname.get()
         email = self.email.get()
-        password = self.password.get()
+        password = self.enter_password.get()
         
         # Check fields completed
         if not name or not firstname or not email or not password:

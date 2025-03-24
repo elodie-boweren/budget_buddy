@@ -37,7 +37,7 @@ def main():
     """Main function to run programme"""
     # Initiate the user
     customer = Customer()
-   
+
     # Display log-in page
     customer.log_menu()
 

@@ -54,8 +54,8 @@ def create_header(title):
     header_frame.pack(fill="x", pady=(0, 20))
     
     title_label = ctk.CTkLabel(header_frame, text=title, 
-                              font=ctk.CTkFont(size=24, weight="bold"),
-                              text_color=TEXT_COLOR)
+                                font=ctk.CTkFont(size=24, weight="bold"),
+                                text_color=TEXT_COLOR)
     title_label.place(relx=0.5, rely=0.5, anchor="center")
     
     return header_frame
@@ -66,8 +66,8 @@ def create_footer():
     footer_frame.pack(fill="x", side="bottom")
     
     footer_label = ctk.CTkLabel(footer_frame, text=f"{APP_NAME} - Your financial ally",
-                               font=ctk.CTkFont(size=12),
-                               text_color=TEXT_COLOR)
+                                font=ctk.CTkFont(size=12),
+                                text_color=TEXT_COLOR)
     footer_label.place(relx=0.5, rely=0.5, anchor="center")
     
     return footer_frame
@@ -83,7 +83,7 @@ def admin_menu():
     
     # Administrator options
     btn_users = ctk.CTkButton(content_frame, text="Manage users", 
-                             height=40, font=ctk.CTkFont(size=14))
+                            height=40, font=ctk.CTkFont(size=14))
     btn_users.pack(pady=10, padx=20, fill="x")
     
     btn_accounts = ctk.CTkButton(content_frame, text="Manage accounts", 
