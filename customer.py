@@ -202,7 +202,7 @@ class Customer:
         mydb.commit()
         
         # Confirmation message
-        self.app_manager.show_success("Account created", "Your account was successfully created !")
+        # self.app_manager.show_success("Account created", "Your account was successfully created !")
         
         # Back to the log-in page
         self.log_in()
@@ -246,13 +246,10 @@ class Customer:
         button_frame = ctk.CTkFrame(main_frame, fg_color="transparent")
         button_frame.pack(pady=20, fill="x")
         
-        back_button = ctk.CTkButton(button_frame, text="Back", 
-                                   width=140, command=self.log_menu,
-                                   fg_color="#555555", hover_color="#333333")
+        back_button = ctk.CTkButton(button_frame, text="Back", width=140, command=self.log_menu,fg_color="#555555", hover_color="#333333")
         back_button.pack(side="left", padx=20)
         
-        connect_button = ctk.CTkButton(button_frame, text="Sign in", 
-                                      width=200, command=self.validate_login)
+        connect_button = ctk.CTkButton(button_frame, text="Sign in", width=200, command=self.validate_login)
         connect_button.pack(side="right", padx=20)
         
         self.app_manager.create_footer()
