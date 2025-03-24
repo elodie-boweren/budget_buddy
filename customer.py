@@ -107,7 +107,7 @@ class Customer:
         self.email.pack(pady=10)
         
         password_frame = ctk.CTkFrame(form_frame, fg_color="transparent")
-        password_frame.pack(pady=10, fill="x")
+        password_frame.pack(pady=10, fill="both")
         
         self.enter_password = ctk.CTkEntry(password_frame, width=300, placeholder_text="Password", show="*")
         self.enter_password.pack(pady = 10)
@@ -116,7 +116,7 @@ class Customer:
         show_password_checkbox = ctk.CTkCheckBox(password_frame, text="Display", 
                                                 variable=self.show_password, 
                                                 command=self.password_visibility)
-        show_password_checkbox.place(x=580, y = 17)
+        show_password_checkbox.place(relx=0.75, rely = 0.4)
         
         # Password information message
         password_info = ctk.CTkLabel(form_frame, 
@@ -223,13 +223,13 @@ class Customer:
         password_frame.pack(pady=10, fill="x")
         
         self.enter_password = ctk.CTkEntry(password_frame, width=300, placeholder_text="Password", show="*")
-        self.enter_password.pack(side="left", padx=(0, 10))
+        self.enter_password.pack(pady=10)
         
         self.show_password = ctk.BooleanVar(value=False)
         show_password_checkbox = ctk.CTkCheckBox(password_frame, text="Display", 
                                                 variable=self.show_password, 
                                                 command=self.password_visibility)
-        show_password_checkbox.pack(side="left")
+        show_password_checkbox.place(relx=0.8, rely=0.5, anchor="center")
         
         # Error message
         self.login_error = ctk.CTkLabel(form_frame, text="", text_color="red")
