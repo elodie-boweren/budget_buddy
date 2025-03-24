@@ -6,7 +6,7 @@ import re
 import bcrypt
 from PIL import Image, ImageTk
 import os
-from common import *
+from common import AppManager
 from dashboard import Dashboard
 
 # List of adminstrator emails
@@ -20,12 +20,13 @@ admin_emails = [
 ]
 
 class Customer:
-    def __init__(self, email=None, password=None, firstname=None, name=None):
+    def __init__(self, app_manager=None, email=None, password=None, firstname=None, name=None):
         self.email = email
         self.password = password
         self.firstname = firstname
         self.name = name
         self.dashboard = None
+        self.app_manager = app_manager
         
     def generate_iban(self):
         """Create a random IBAN in French format"""
@@ -54,13 +55,13 @@ class Customer:
         """Displays the log-in menu"""
         from database import cursor, mydb
         
-        clear_screen()
+        self.app_manager.clear_screen()
         
         # Header with logo
-        header = create_header("Budget Buddy")
+        header = self.app_manager.create_header("Budget Buddy")
         
         # Main content
-        main_frame = ctk.CTkFrame(root)
+        main_frame = ctk.CTkFrame(self.app_manager.get_root())
         main_frame.pack(pady=20, padx=20, fill="both", expand=True)
         
         # Description
@@ -81,18 +82,18 @@ class Customer:
                                      font=ctk.CTkFont(size=16), command=self.create_account)
         button_signup.pack(pady=10)
         
-        create_footer()
+        self.app_manager.create_footer()
 
     def create_account(self):
         """Displays the entry boxes to create an account"""
         from database import cursor, mydb
         
-        clear_screen()
+        self.app_manager.clear_screen()
         
-        header = create_header("Account creation")
+        header = self.app_manager.create_header("Account creation")
         
         # Main content
-        main_frame = ctk.CTkFrame(root)
+        main_frame = ctk.CTkFrame(self.app_manager.get_root())
         main_frame.pack(pady=20, padx=20, fill="both", expand=True)
         
         # Entry area
@@ -145,7 +146,7 @@ class Customer:
                                     width=200, command=self.submit_account)
         submit_button.pack(side="right", padx=20)
         
-        create_footer()
+        self.app_manager.create_footer()
     
     def submit_account(self):
         """Processes the submission for account creation"""
@@ -201,7 +202,7 @@ class Customer:
         mydb.commit()
         
         # Confirmation message
-        show_success("Account created", "Your account was successfully created !")
+        self.app_manager.show_success("Account created", "Your account was successfully created !")
         
         # Back to the log-in page
         self.log_in()
@@ -210,12 +211,12 @@ class Customer:
         """Displays log-in fields"""
         from database import cursor, mydb
         
-        clear_screen()
+        self.app_manager.clear_screen()
         
-        header = create_header("Connexion")
+        header = self.app_manager.create_header("Connexion")
         
         # Log-in area
-        main_frame = ctk.CTkFrame(root)
+        main_frame = ctk.CTkFrame(self.app_manager.get_root())
         main_frame.pack(pady=20, padx=20, fill="both", expand=True)
         
         form_frame = ctk.CTkFrame(main_frame)
@@ -254,7 +255,7 @@ class Customer:
                                       width=200, command=self.validate_login)
         connect_button.pack(side="right", padx=20)
         
-        create_footer()
+        self.app_manager.create_footer()
     
     def validate_login(self):
         """Validates connexion info"""
@@ -277,11 +278,11 @@ class Customer:
             # Check password
             if bcrypt.checkpw(entered_password.encode('utf-8'), stored_password.encode('utf-8')):
                 # Initialize dashboard with user's information
-                self.dashboard = Dashboard(user_id)
+                self.dashboard = Dashboard(self.app_manager, user_id)
                 
                 # Go to the correct dashboard
                 if is_admin or email in admin_emails:
-                    admin_menu()
+                    self.app_manager.admin_menu()
                 else:
                     self.dashboard.display_dashboard()
             else:

@@ -1,6 +1,5 @@
 import customtkinter as ctk
 from database import *
-from common import *
 from transaction import Transaction
 from CTkMessagebox import CTkMessagebox
 import matplotlib.pyplot as plt
@@ -8,7 +7,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import datetime
 
 class Dashboard:
-    def __init__(self, user_id=None):
+    def __init__(self, app_manager=None, user_id=None):
+        self.app_manager = app_manager
         self.user_id = user_id
         self.accounts = []
         self.selected_account_id = None
@@ -27,7 +27,7 @@ class Dashboard:
             self.user_id, self.first_name, self.name = user_info
            
             # Initialize class Transaction
-            self.transaction = Transaction(self.user_id)
+            self.transaction = Transaction(self.user_id, self.app_manager)
 
             # gets all accounts of user
             cursor.execute("""
@@ -188,13 +188,13 @@ class Dashboard:
     def display_dashboard(self):
         """Displays main dashboard"""
         self.get_user_info()
-        clear_screen()
+        self.app_manager.clear_screen()
        
         # Header
-        header = create_header(f"Dashboard - {self.first_name} {self.name}")
+        header = self.app_manager.create_header(f"Dashboard - {self.first_name} {self.name}")
        
         # Main frame
-        main_frame = ctk.CTkFrame(root)
+        main_frame = ctk.CTkFrame(self.app_manager.get_root())
         main_frame.pack(padx=20, pady=20, fill="both", expand=True)
        
         # Left panel - Account selection and info
@@ -280,10 +280,10 @@ class Dashboard:
         logout_button = ctk.CTkButton(
             main_frame,
             text="Sign out",
-            command=lambda: Customer().log_menu(),
+            command=lambda: Customer(self.app_manager).log_menu(),
             fg_color="#E53935",
             hover_color="#C62828"
         )
         logout_button.pack(side="bottom", pady=20)
        
-        create_footer()
+        self.app_manager.create_footer()

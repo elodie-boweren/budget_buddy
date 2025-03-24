@@ -1,13 +1,14 @@
 import customtkinter as ctk
 from database import *
 from common import *
-from CTkMessagebox import CTkMessagebox
 import datetime
 from decimal import Decimal
 
 class Transaction:
-    def __init__(self, user_id):
+    def __init__(self, user_id, app_manager):
         self.user_id = user_id
+        self.app_manager = app_manager
+        self.root = app_manager.get_root()
         self.update_balance()
 
     def update_balance(self):
@@ -19,18 +20,18 @@ class Transaction:
             self.account_id, self.user_balance = None, 0
 
     def deposit(self):
-        clear_screen()
+        self.app_manager.clear_screen()
        
         # Title
-        title_label = ctk.CTkLabel(root, text="Deposit", font=("Arial", 18, "bold"))
+        title_label = ctk.CTkLabel(self.root, text="Deposit", font=("Arial", 18, "bold"))
         title_label.place(relx=0.5, rely=0.2, anchor="center")
        
         # Enter amount 
-        self.entry_amount = ctk.CTkEntry(root, width=220, placeholder_text="Amount to deposit")
+        self.entry_amount = ctk.CTkEntry(self.root, width=220, placeholder_text="Amount to deposit")
         self.entry_amount.place(relx=0.5, rely=0.3, anchor="center")
        
         # Enter description
-        self.description = ctk.CTkEntry(root, width=220, placeholder_text="Description")
+        self.description = ctk.CTkEntry(self.root, width=220, placeholder_text="Description")
         self.description.place(relx=0.5, rely=0.4, anchor="center")
        
         # Scroll down menu to select category
@@ -39,20 +40,20 @@ class Transaction:
         category_names = [cat[1] for cat in categories]
         self.category_ids = [cat[0] for cat in categories]
        
-        self.category_menu = ctk.CTkComboBox(root, values=category_names)
+        self.category_menu = ctk.CTkComboBox(self.root, values=category_names)
         self.category_menu.place(relx=0.5, rely=0.5, anchor="center")
         self.category_menu.set("Select a category")
        
         # Error message
-        self.error_label = ctk.CTkLabel(root, text="", text_color="red")
+        self.error_label = ctk.CTkLabel(self.root, text="", text_color="red")
         self.error_label.place(relx=0.5, rely=0.6, anchor="center")
        
         # Submit button
-        validate_button = ctk.CTkButton(root, text="Deposit", command=self.validate_deposit)
+        validate_button = ctk.CTkButton(self.root, text="Deposit", command=self.validate_deposit)
         validate_button.place(relx=0.5, rely=0.7, anchor="center")
        
         # Back button
-        back_button = ctk.CTkButton(root, text="Back", command=self.display_transaction)
+        back_button = ctk.CTkButton(self.root, text="Back", command=self.display_transaction)
         back_button.place(relx=0.5, rely=0.8, anchor="center")
    
     def validate_deposit(self):
@@ -97,7 +98,7 @@ class Transaction:
             self.update_balance()
            
             # Confirmation message
-            CTkMessagebox(title="Success", message=f"Deposit of {amount}€ completed successfully!", icon="check")
+            # self.app_manager.show_success("Success", f"Deposit of {amount}€ completed successfully!")
            
             # Return to transaction screen
             self.display_transaction()
@@ -106,18 +107,18 @@ class Transaction:
             self.error_label.configure(text="Please enter a valid amount")
    
     def withdrawal(self):
-        clear_screen()
+        self.app_manager.clear_screen()
        
         # Title
-        title_label = ctk.CTkLabel(root, text="Withdraw", font=("Arial", 18, "bold"))
+        title_label = ctk.CTkLabel(self.root, text="Withdraw", font=("Arial", 18, "bold"))
         title_label.place(relx=0.5, rely=0.2, anchor="center")
        
         # Enter amount
-        self.entry_withdrawal = ctk.CTkEntry(root, width=220, placeholder_text="Amount to withdraw")
+        self.entry_withdrawal = ctk.CTkEntry(self.root, width=220, placeholder_text="Amount to withdraw")
         self.entry_withdrawal.place(relx=0.5, rely=0.3, anchor="center")
        
         # Enter description
-        self.description = ctk.CTkEntry(root, width=220, placeholder_text="Description")
+        self.description = ctk.CTkEntry(self.root, width=220, placeholder_text="Description")
         self.description.place(relx=0.5, rely=0.4, anchor="center")
        
         # Scroll down menu to select category 
@@ -126,20 +127,20 @@ class Transaction:
         category_names = [cat[1] for cat in categories]
         self.category_ids = [cat[0] for cat in categories]
        
-        self.category_menu = ctk.CTkComboBox(root, values=category_names)
+        self.category_menu = ctk.CTkComboBox(self.root, values=category_names)
         self.category_menu.place(relx=0.5, rely=0.5, anchor="center")
         self.category_menu.set("Select a category")
        
         # Error message
-        self.error_label = ctk.CTkLabel(root, text="", text_color="red")
+        self.error_label = ctk.CTkLabel(self.root, text="", text_color="red")
         self.error_label.place(relx=0.5, rely=0.6, anchor="center")
        
         # Confirmation button
-        validate_button = ctk.CTkButton(root, text="Withdraw", command=self.validate_withdrawal)
+        validate_button = ctk.CTkButton(self.root, text="Withdraw", command=self.validate_withdrawal)
         validate_button.place(relx=0.5, rely=0.7, anchor="center")
        
         # Back button
-        back_button = ctk.CTkButton(root, text="Back", command=self.display_transaction)
+        back_button = ctk.CTkButton(self.root, text="Back", command=self.display_transaction)
         back_button.place(relx=0.5, rely=0.8, anchor="center")
    
     def validate_withdrawal(self):
@@ -158,7 +159,7 @@ class Transaction:
                 return
                
             if category_name == "Select a category":
-                self.error_label.configure(text="VPlease choose a category")
+                self.error_label.configure(text="Please choose a category")
                 return
            
             if amount > self.user_balance:
@@ -188,7 +189,7 @@ class Transaction:
             self.update_balance()
            
             # Confirmation message
-            CTkMessagebox(title="Success", message=f"Withdrawal of {amount}€ completed successfully!", icon="check")
+            # self.app_manager.show_success("Success", f"Withdrawal of {amount}€ completed successfully!")
            
             # Return to transaction screen
             self.display_transaction()
@@ -197,34 +198,34 @@ class Transaction:
             self.error_label.configure(text="Please enter a valid amount")
    
     def transfer(self):
-        clear_screen()
+        self.app_manager.clear_screen()
        
         # Title
-        title_label = ctk.CTkLabel(root, text="Make a transfer", font=("Arial", 18, "bold"))
+        title_label = ctk.CTkLabel(self.root, text="Make a transfer", font=("Arial", 18, "bold"))
         title_label.place(relx=0.5, rely=0.2, anchor="center")
        
         # Iban field
-        self.iban_entry = ctk.CTkEntry(root, width=220, placeholder_text="Recipient IBAN")
+        self.iban_entry = ctk.CTkEntry(self.root, width=220, placeholder_text="Recipient IBAN")
         self.iban_entry.place(relx=0.5, rely=0.3, anchor="center")
        
         # Enter amount
-        self.transfer_amount = ctk.CTkEntry(root, width=220, placeholder_text="Amount to transfer")
+        self.transfer_amount = ctk.CTkEntry(self.root, width=220, placeholder_text="Amount to transfer")
         self.transfer_amount.place(relx=0.5, rely=0.4, anchor="center")
        
         # Enter description
-        self.description = ctk.CTkEntry(root, width=220, placeholder_text="Description")
+        self.description = ctk.CTkEntry(self.root, width=220, placeholder_text="Description")
         self.description.place(relx=0.5, rely=0.5, anchor="center")
        
         # Error message
-        self.error_label = ctk.CTkLabel(root, text="", text_color="red")
+        self.error_label = ctk.CTkLabel(self.root, text="", text_color="red")
         self.error_label.place(relx=0.5, rely=0.6, anchor="center")
        
         # Confirmation button
-        validate_button = ctk.CTkButton(root, text="Transfer", command=self.validate_transfer)
+        validate_button = ctk.CTkButton(self.root, text="Transfer", command=self.validate_transfer)
         validate_button.place(relx=0.5, rely=0.7, anchor="center")
        
         # Back button
-        back_button = ctk.CTkButton(root, text="Back", command=self.display_transaction)
+        back_button = ctk.CTkButton(self.root, text="Back", command=self.display_transaction)
         back_button.place(relx=0.5, rely=0.8, anchor="center")
    
     def validate_transfer(self):
@@ -301,7 +302,7 @@ class Transaction:
             self.update_balance()
            
             # Confirmation message
-            CTkMessagebox(title="Success", message=f"Transfer of {amount}€ completed successfully!", icon="check")
+            # self.app_manager.show_success("Success", f"Transfer of {amount}€ completed successfully!")
            
             # Return to transaction screen
             self.display_transaction()
@@ -310,14 +311,14 @@ class Transaction:
             self.error_label.configure(text="Please enter a valid amount")
    
     def show_history(self):
-        clear_screen()
+        self.app_manager.clear_screen()
        
         # Title
-        title_label = ctk.CTkLabel(root, text="History of transactions", font=("Arial", 18, "bold"))
+        title_label = ctk.CTkLabel(self.root, text="History of transactions", font=("Arial", 18, "bold"))
         title_label.place(relx=0.5, rely=0.1, anchor="center")
        
         # Sort options
-        filter_frame = ctk.CTkFrame(root)
+        filter_frame = ctk.CTkFrame(self.root)
         filter_frame.place(relx=0.5, rely=0.2, anchor="center")
        
         # Scroll down menu for the type of transaction
@@ -334,14 +335,14 @@ class Transaction:
         filter_button.grid(row=0, column=2, padx=5, pady=5)
        
         # Transaction display area
-        self.history_frame = ctk.CTkScrollableFrame(root, width=600, height=300)
+        self.history_frame = ctk.CTkScrollableFrame(self.root, width=600, height=300)
         self.history_frame.place(relx=0.5, rely=0.5, anchor="center")
        
         # Load transactions
         self.load_transactions()
        
         # Back button
-        back_button = ctk.CTkButton(root, text="Back", command=self.display_transaction)
+        back_button = ctk.CTkButton(self.root, text="Back", command=self.display_transaction)
         back_button.place(relx=0.5, rely=0.85, anchor="center")
    
     def load_transactions(self, type_filter=None):
@@ -422,47 +423,47 @@ class Transaction:
         self.load_transactions(type_filter)
    
     def display_transaction(self):
-        clear_screen()
+        self.app_manager.clear_screen()
        
         # Title
-        title_label = ctk.CTkLabel(root, text="Transactions", font=("Arial", 20, "bold"))
+        title_label = ctk.CTkLabel(self.root, text="Transactions", font=("Arial", 20, "bold"))
         title_label.place(relx=0.5, rely=0.1, anchor="center")
        
         # Balance display
-        balance_label = ctk.CTkLabel(root,
+        balance_label = ctk.CTkLabel(self.root,
                                      text=f"Current balance: {self.user_balance}€",
                                      font=("Arial", 16))
         balance_label.place(relx=0.5, rely=0.2, anchor="center")
        
         # Buttons for various operations
-        deposit_button = ctk.CTkButton(root, text="Make a deposit",
+        deposit_button = ctk.CTkButton(self.root, text="Make a deposit",
                                       command=self.deposit,
                                       width=200, height=40)
         deposit_button.place(relx=0.5, rely=0.35, anchor="center")
        
-        withdrawal_button = ctk.CTkButton(root, text="Make a withdrawal",
+        withdrawal_button = ctk.CTkButton(self.root, text="Make a withdrawal",
                                          command=self.withdrawal,
                                          width=200, height=40)
         withdrawal_button.place(relx=0.5, rely=0.45, anchor="center")
        
-        transfer_button = ctk.CTkButton(root, text="Make a transfer",
+        transfer_button = ctk.CTkButton(self.root, text="Make a transfer",
                                        command=self.transfer,
                                        width=200, height=40)
         transfer_button.place(relx=0.5, rely=0.55, anchor="center")
        
-        history_button = ctk.CTkButton(root, text="Show history of transactions",
+        history_button = ctk.CTkButton(self.root, text="Show history of transactions",
                                       command=self.show_history,
                                       width=200, height=40)
         history_button.place(relx=0.5, rely=0.65, anchor="center")
        
         # Back button
-        back_button = ctk.CTkButton(root, text="Back to dashboard",
+        back_button = ctk.CTkButton(self.root, text="Back to dashboard",
                                    command=self.back_to_dashboard,
                                    width=200, height=40)
         back_button.place(relx=0.5, rely=0.8, anchor="center")
    
     def back_to_dashboard(self):
         from dashboard import Dashboard
-        dashboard = Dashboard()
+        dashboard = Dashboard(self.app_manager)
         dashboard.user_id = self.user_id
         dashboard.display_dashboard()
