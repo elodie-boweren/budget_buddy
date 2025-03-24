@@ -72,7 +72,7 @@ class Dashboard:
         self.get_user_info()
        
         # Displays confirmation message
-        CTkMessagebox(title="Success", message="Savings account successfully created!", icon="check")
+        # CTkMessagebox(title="Success", message="Savings account successfully created!", icon="check")
        
         # Updates the display
         self.display_dashboard()
