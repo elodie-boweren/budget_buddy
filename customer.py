@@ -154,7 +154,7 @@ class Customer:
         name = self.name.get()
         firstname = self.firstname.get()
         email = self.email.get()
-        password = self.password.get()
+        password = self.enter_password.get()
         
         # Check fields completed
         if not name or not firstname or not email or not password:
@@ -204,7 +204,7 @@ class Customer:
         show_success("Account created", "Your account was successfully created !")
         
         # Back to the log-in page
-        self.log_in()
+        self.dashboard.display_dashboard()
 
     def log_in(self):
         """Displays log-in fields"""
@@ -229,13 +229,13 @@ class Customer:
         password_frame.pack(pady=10, fill="x")
         
         self.enter_password = ctk.CTkEntry(password_frame, width=300, placeholder_text="Password", show="*")
-        self.enter_password.pack(side="left", padx=(0, 10))
+        self.enter_password.pack(pady=10, )
         
         self.show_password = ctk.BooleanVar(value=False)
         show_password_checkbox = ctk.CTkCheckBox(password_frame, text="Display", 
                                                 variable=self.show_password, 
                                                 command=self.password_visibility)
-        show_password_checkbox.pack(side="left")
+        show_password_checkbox.place(x=580, y = 17)
         
         # Error message
         self.login_error = ctk.CTkLabel(form_frame, text="", text_color="red")

@@ -324,7 +324,7 @@ class Transaction:
         type_label = ctk.CTkLabel(filter_frame, text="Type:")
         type_label.grid(row=0, column=0, padx=5, pady=5)
        
-        types = ["All", "Deposit", "Wthdrawal", "Incoming transfer", "outgoing transfer"]
+        types = ["All", "Deposit", "Withdrawal", "Incoming transfer", "outgoing transfer"]
         self.type_menu = ctk.CTkComboBox(filter_frame, values=types)
         self.type_menu.grid(row=0, column=1, padx=5, pady=5)
         self.type_menu.set("All")
