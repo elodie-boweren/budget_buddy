@@ -83,6 +83,6 @@ class AppManager:
                                 height=40, font=ctk.CTkFont(size=14),
                                 fg_color="#E53935", hover_color="#C62828",
                                 command=lambda: user.log_menu(self))  # Pass self as AppManager instance
-        btn_logout.pack(pady=30, padx=20, fill="x")
+        btn_logout.pack(side = "bottom", pady=30, padx=20, fill="x")
         
         self.create_footer()

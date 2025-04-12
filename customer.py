@@ -64,7 +64,7 @@ class Customer:
         
         # Description
         welcome_label = ctk.CTkLabel(main_frame, 
-                                    text="your financial ally for clever spending and balanced budget",
+                                    text="Your financial ally for clever spending and balanced budget",
                                     font=ctk.CTkFont(size=14))
         welcome_label.pack(pady=(20, 40))
         

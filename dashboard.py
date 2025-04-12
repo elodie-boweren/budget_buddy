@@ -258,7 +258,7 @@ class Dashboard:
             right_panel = ctk.CTkFrame(main_frame)
             right_panel.pack(side="right", fill="both", expand=True, padx=10, pady=10)
 
-            stats_label = ctk.CTkLabel(right_panel, text="Résumé financier", font=("Arial", 16, "bold"))
+            stats_label = ctk.CTkLabel(right_panel, text="Financial Summary", font=("Arial", 16, "bold"))
             stats_label.pack(pady=(10, 20))
 
             self.stats_frame = ctk.CTkFrame(right_panel)
@@ -270,7 +270,7 @@ class Dashboard:
         else:
             no_account_label = ctk.CTkLabel(
                 left_panel,
-                text="You have no accoutn yet.",
+                text="You have no account yet.",
                 font=("Arial", 14)
             )
             no_account_label.pack(pady=20)
